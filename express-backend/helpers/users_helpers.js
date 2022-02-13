@@ -1,7 +1,7 @@
 module.exports = (db) => {
   const getUsers = () => {
     const query = {
-      text: "SELECT * FROM users",
+      text: "SELECT * FROM users;",
     };
 
     return db
@@ -10,9 +10,23 @@ module.exports = (db) => {
       .catch((err) => err);
   };
 
+  const checkCurrentUser = (session, id) => {
+    const query = {
+      text: `SELECT * FROM users WHERE id = $1;`,
+      values: [id],
+    };
+    return db
+      .query(query)
+      .then((result) => {
+        const user = result.rows[0];
+        return user.id === Number(session);
+      })
+      .catch((err) => err);
+  };
+
   const getUserByEmail = (email) => {
     const query = {
-      text: `SELECT * FROM users WHERE email = $1`,
+      text: `SELECT * FROM users WHERE email = $1;`,
       values: [email],
     };
 
@@ -24,7 +38,7 @@ module.exports = (db) => {
 
   const addUser = (firstName, lastName, email, password) => {
     const query = {
-      text: `INSERT INTO users (first_name, last_name, email, password) VALUES ($1, $2, $3, $4) RETURNING *`,
+      text: `INSERT INTO users (first_name, last_name, email, password) VALUES ($1, $2, $3, $4) RETURNING *;`,
       values: [firstName, lastName, email, password],
     };
 
@@ -38,5 +52,6 @@ module.exports = (db) => {
     getUsers,
     getUserByEmail,
     addUser,
+    checkCurrentUser,
   };
 };
