@@ -15,22 +15,29 @@ module.exports = (dbHelpers, db) => {
     db.query(`SELECT * FROM users WHERE id= $1;`, [userID]).then((data) => {
       const loggedUser = data.rows[0];
       if (loggedUser.is_admin === true) {
-        db.query(
-          `SELECT * FROM users JOIN transactions on users.id = user_id;`
-        ).then((data) => {
-          const usersTransactions = data.rows;
-          const templateVars = {
-            usersTransactions
-          }
-          res.render("admin_transactions", templateVars)
-        });
-      } else {
-        db.query(
-          `SELECT * FROM users JOIN transactions on users.id = user_id WHERE id=$1;`, [userID]
+        db.query(`SELECT * FROM users JOIN transactions on users.id = user_id;`)
           .then((data) => {
-            console.log(data)
+            const usersTransactions = data.rows;
+            const templateVars = {
+              usersTransactions,
+            };
+            res.render("admin_transactions", templateVars);
           })
+          .catch((err) => console.log(err));
+      } else {
+        // get the transaction for each user.
+        db.query(
+          `SELECT * FROM users JOIN transactions on users.id = user_id WHERE user_id=$1;`,
+          [userID]
         )
+          .then((data) => {
+            const usersTransactions = data.rows;
+            const templateVars = {
+              usersTransactions,
+            };
+            res.render("user_transaction", templateVars);
+          })
+          .catch((err) => console.log(err));
       }
     });
   });
@@ -38,14 +45,3 @@ module.exports = (dbHelpers, db) => {
   return router;
 };
 
-
-/* Steps
-
-1.) If the user is admin, then run the query to get all users and all transactions. SELECT * JOIN.
-2.) Iterate through this data. 
-3.) Fill a templateVars.
-4.) Pass templateVars to ejs.
-
-If the user is not admin, run a different query.
-
-*/

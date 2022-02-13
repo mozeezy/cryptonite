@@ -18,11 +18,12 @@
         <th>Transaction ID</th>
         <th>Customer Name</th>
         <th>Email</th>
-        <th>E-Wallet Amount</th>
+        <th>E-Wallet Balance</th>
         <th>Amount purchased</th>
         <th>Coins purchased</th>
         <th>Amount of coins purchased/sold</th>
         <th>Buy/Sold</th>
+        <th>Date of Transaction </th>
       </tr>
 
 
@@ -44,6 +45,7 @@
       <td style="color: green;"> <%= transaction.buy_or_sell %></td>
 
       <% } %>
+      <td> <%= transaction.created_at %> </td>
     </tr>
     <% } %> 
 

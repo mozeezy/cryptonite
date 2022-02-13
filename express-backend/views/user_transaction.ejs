@@ -1,12 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>User Transactions</title>
-</head>
-<body>
-  
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Transactions</title>
+  </head>
+  <body>
+    <main>
+      <h1>Your Recent Transactions</h1>
+      <table>
+        <tr style ="background-color: orange;">
+          <th>E-Wallet Balance</th>
+          <th>Amount purchased</th>
+          <th>Coins purchased</th>
+          <th>Amount of coins purchased/sold</th>
+          <th>Buy/Sold</th>
+          <th>Date of Transaction</th>
+        </tr>
+
+        <% for (let transaction of usersTransactions) { %>
+        <tr>
+          <td><%= transaction.e_wallet %></td>
+          <td><%= transaction.amount %></td>
+          <td><%= transaction.coin_name %></td>
+          <td><%= transaction.coin_amount %></td>
+          <% if (transaction.buy_or_sell === 'buy') { %>
+          <td style="color: red"><%= transaction.buy_or_sell %></td>
+
+          <% } else { %>
+          <td style="color: green"><%= transaction.buy_or_sell %></td>
+
+          <% } %>
+          <td><%= transaction.created_at %></td>
+        </tr>
+        <% } %>
+      </table>
+    </main>
+  </body>
 </html>
