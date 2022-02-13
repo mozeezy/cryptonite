@@ -24,7 +24,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/", indexRouter);
-app.use("/api/users", usersRouter(dbHelpers)); // this route receives the db_helpers functions.
+app.use("/api/users", usersRouter(dbHelpers, db)); // this route receives the db_helpers functions.
 // app.use("/api/transactions", transactionsRouter(dbHelpers));
 
 // catch 404 and forward to error handler
