@@ -4,9 +4,14 @@ const router = express.Router();
 const bcrypt = require("bcryptjs");
 
 // this module receives the destructured dbHelpers object.
-module.exports = ({ addUser }, db) => {
+module.exports = ({ addUser, getUserByEmail }, db) => {
+  // user logout
   router.get("/logout", (req, res) => {
     res.send("Successfully logged out!");
+  });
+  // user register page
+  router.get("/", (req, res) => {
+    res.render("user_signup");
   });
   //Logs in user.
   router.get("/:id", (req, res) => {
@@ -48,18 +53,26 @@ module.exports = ({ addUser }, db) => {
       }
     });
   });
-  // user landing page
-  router.get("/", (req, res) => {
-    res.render("user_signup");
-  });
 
+  // redirect new user to their transactions.
   router.post("/", (req, res) => {
     const { fName, lName, email, password } = req.body;
     console.log(req.body);
-    addUser(fName, lName, email, password).then((data) => {
-      console.log(data);
-      res.redirect(`/api/users/${data.id}`);
-    });
+
+    getUserByEmail(email)
+      .then((data) => {
+        if (data) {
+          res.status(400).send({ error: "User already exists!" });
+        }
+
+        addUser(fName, lName, email, password)
+          .then((data) => {
+            console.log(data);
+            res.redirect(`/api/users/${data.id}`);
+          })
+          .catch((err) => console.log(err));
+      })
+      .catch((err) => console.log(err));
   });
 
   return router;
