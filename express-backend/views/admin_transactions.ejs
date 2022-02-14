@@ -6,31 +6,38 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- Importing Stylesheet -->
-  <link rel="stylesheet" href="../styles/admin_transactions.css" />
 
   <title>Admin Page</title>
 </head>
 <body>
+  <%- include('./_nav.ejs')%>
+  <!-- <form action="/api/users/1" method="POST">
+    <h1>Add User</h1>
+    <input type="text" name="fname" placeholder="Enter Your First Name"> <br><br>
+    <input type="text" name="lname" placeholder="Enter Your Last Name"> <br><br>
+    <input type="email" name="email" placeholder="Enter Your Email Address"> <br><br>
+    <input type="password" name="password" placeholder="Enter Your Password"><br><br>
+    <button type="submit">Submit</button>
+    </form> -->
   <main>
     <h1>Admin Dashboard</h1>
     <table class="table">
       <tr style="background-color:orange">
-        <th>Transaction ID</th>
-        <th>Customer Name</th>
-        <th>Email</th>
-        <th>E-Wallet Balance</th>
-        <th>Amount purchased</th>
-        <th>Coins purchased</th>
-        <th>Amount of coins purchased/sold</th>
-        <th>Buy/Sold</th>
-        <th>Date of Transaction </th>
+          <th>User ID</th>
+          <th>Customer Name</th>
+          <th>Email</th>
+          <th>E-Wallet Balance</th>
+          <th>Amount purchased</th>
+          <th>Coins purchased</th>
+          <th>Amount of coins purchased/sold</th>
+          <th>Buy/Sold</th>
+          <th>Date of Transaction </th>
       </tr>
-
 
     <% for (let transaction of usersTransactions) { %>
 
     <tr>
-      <td> <%= transaction.id%> </td>
+      <td> <%= transaction.user_id %></td>
       <td> <%= transaction.first_name %>, <%=transaction.last_name %> </td>
       <td> <%= transaction.email %></td>
       <td> <%= transaction.e_wallet %></td>
@@ -47,9 +54,9 @@
       <% } %>
       <td> <%= transaction.created_at %> </td>
     </tr>
-    <% } %> 
+    <% } %>     
+  </main> 
 
-  </main>
   
 </body>
 </html>
