@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
+import { BrowserRouter, Router } from "react-router-dom";
 import axios from "axios";
+import NavBar from "./components/NavBar"
 
 function App() {
   const [users, setUsers] = useState([]);
@@ -25,6 +27,7 @@ function App() {
     ));
 
   return <div className="App">
+    <NavBar/>
     <ul>
       {userList}
     </ul>
