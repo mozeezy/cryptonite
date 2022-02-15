@@ -25,7 +25,6 @@ module.exports = (
   //Logs in user.
   router.get("/:id", (req, res) => {
     const userID = req.params.id;
-    console.log(userID);
     // Confirm that the id parameter entered is a number.
     if (isNaN(userID)) {
       res.status(403).json({ error: "User doesn't exist" });
@@ -37,7 +36,6 @@ module.exports = (
         //
         getAllTransactions()
           .then((data) => {
-            console.log(data);
             const usersTransactions = data;
             const templateVars = {
               usersTransactions,
@@ -69,15 +67,19 @@ module.exports = (
       return res.status(400).send({ message: "Credentials incomplete!" });
     }
     // if the user signs in with an existing email, send a message that user exists
-    getUserByEmail(email).then((data) => {
+    getUserByEmail(email).then(async (data) => {
       if (data) {
-        res.status(400).send({ error: "User already exists!" });
+        return res.status(400).send({ error: "User already exists!" });
       }
-      // Otherwise, add the user to the database and assign them an ID
-      addUser(fName, lName, email, password)
+
+      // Hash the incoming password from the field before storing it in the database.
+      const hashMyPassword = await bcrypt.hash(password, 10);
+
+      // Add the user to the database.
+      addUser(fName, lName, email, hashMyPassword)
         .then((data) => {
           console.log(data);
-          res.redirect(`/api/users/${data.id}`);
+          return res.redirect(`/api/users/${data.id}`);
         })
         .catch((err) => console.log(err));
     });
