@@ -45,13 +45,24 @@ module.exports = (db) => {
       .catch((err) => err);
   };
 
-  const getUsersTransactions = () => {
+  const getAllTransactions = () => {
     const query = {
       text: `SELECT * FROM users JOIN transactions on users.id = user_id ORDER BY created_at DESC;`,
     };
     return db
       .query(query)
-      .then((result) => result.rows[0])
+      .then((result) => result.rows)
+      .catch((err) => err);
+  };
+
+  const getTransactionById = (id) => {
+    const query = {
+      text: `SELECT * FROM users JOIN transactions on users.id = user_id WHERE user_id=$1 ORDER BY created_at DESC;`,
+      values: [id],
+    };
+    return db
+      .query(query)
+      .then((result) => result.rows)
       .catch((err) => err);
   };
 
@@ -60,6 +71,7 @@ module.exports = (db) => {
     getUserByEmail,
     addUser,
     getUserById,
-    getUsersTransactions
+    getAllTransactions,
+    getTransactionById,
   };
 };
