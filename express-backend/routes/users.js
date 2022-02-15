@@ -11,8 +11,7 @@ module.exports = (
     getUserById,
     getAllTransactions,
     getTransactionById,
-  },
-  db
+  }
 ) => {
   // user logout
   router.get("/logout", (req, res) => {
