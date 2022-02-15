@@ -55,9 +55,16 @@ module.exports = ({ addUser, getUserByEmail }, db) => {
   });
 
   // redirect new user to their transactions.
-  router.post("/", (req, res) => {
+  router.post("/register", (req, res) => {
     const { fName, lName, email, password } = req.body;
     console.log(req.body);
+
+// if the inputs are empty, do not prompt the user to login.
+    if (!fName || !lName || !email || !password) {
+      return res
+        .status(400)
+        .send({ message: "Credentials incomplete!" });
+    }
 
     getUserByEmail(email)
       .then((data) => {
