@@ -4,7 +4,7 @@ const router = express.Router();
 const bcrypt = require("bcryptjs");
 
 // this module receives the destructured dbHelpers object.
-module.exports = ({ addUser, getUserByEmail }, db) => {
+module.exports = ({ addUser, getUserByEmail, getUserById, getUsersTransactions }, db) => {
   // user logout
   router.get("/logout", (req, res) => {
     res.send("Successfully logged out!");
@@ -22,12 +22,11 @@ module.exports = ({ addUser, getUserByEmail }, db) => {
       res.status(403).json({ error: "User doesn't exist" });
     }
     // Check if user exists in the database.
-    db.query(`SELECT * FROM users WHERE id= $1;`, [userID]).then((data) => {
-      const loggedUser = data.rows[0];
+    getUserById(userID).then((data) => {
+      const loggedUser = data;
       if (loggedUser.is_admin === true) {
-        db.query(
-          `SELECT * FROM users JOIN transactions on users.id = user_id ORDER BY created_at DESC;`
-        )
+
+        getUsersTransactions()
           .then((data) => {
             const usersTransactions = data.rows;
             const templateVars = {
@@ -59,19 +58,17 @@ module.exports = ({ addUser, getUserByEmail }, db) => {
     const { fName, lName, email, password } = req.body;
     console.log(req.body);
 
-// if the inputs are empty, do not prompt the user to login.
+    // if the inputs are empty, do not prompt the user to login.
     if (!fName || !lName || !email || !password) {
-      return res
-        .status(400)
-        .send({ message: "Credentials incomplete!" });
+      return res.status(400).send({ message: "Credentials incomplete!" });
     }
-
+    // if the user signs in with an existing email, send a message that user exists
     getUserByEmail(email)
       .then((data) => {
         if (data) {
           res.status(400).send({ error: "User already exists!" });
         }
-
+        // Otherwise, add the user to the database and assign them an ID
         addUser(fName, lName, email, password)
           .then((data) => {
             console.log(data);

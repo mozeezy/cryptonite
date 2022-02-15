@@ -10,17 +10,14 @@ module.exports = (db) => {
       .catch((err) => err);
   };
 
-  const checkCurrentUser = (session, id) => {
+  const getUserById = (id) => {
     const query = {
-      text: `SELECT * FROM users WHERE id = $1;`,
+      text: `SELECT * FROM users WHERE id = $1`,
       values: [id],
     };
     return db
       .query(query)
-      .then((result) => {
-        const user = result.rows[0];
-        return user.id === Number(session);
-      })
+      .then((result) => result.rows[0])
       .catch((err) => err);
   };
 
@@ -48,10 +45,21 @@ module.exports = (db) => {
       .catch((err) => err);
   };
 
+  const getUsersTransactions = () => {
+    const query = {
+      text: `SELECT * FROM users JOIN transactions on users.id = user_id ORDER BY created_at DESC;`,
+    };
+    return db
+      .query(query)
+      .then((result) => result.rows[0])
+      .catch((err) => err);
+  };
+
   return {
     getUsers,
     getUserByEmail,
     addUser,
-    checkCurrentUser,
+    getUserById,
+    getUsersTransactions
   };
 };
