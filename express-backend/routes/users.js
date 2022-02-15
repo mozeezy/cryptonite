@@ -78,7 +78,6 @@ module.exports = (
       // Add the user to the database.
       addUser(fName, lName, email, hashMyPassword)
         .then((data) => {
-          console.log(data);
           return res.redirect(`/api/users/${data.id}`);
         })
         .catch((err) => console.log(err));
