@@ -1,7 +1,8 @@
 import axios from 'axios';
 import React, { useEffect, useState, useContext } from 'react';
 import coingeckoRequest from '../API/coingeckoRequest';
-import { WatchlistContext } from "../context/WatchlistContext"
+import { WatchlistContext } from "../context/WatchlistContext";
+import Coin from './Coin'
 
 
 const DisplayCoinWatchlist = () => {
@@ -27,11 +28,23 @@ const DisplayCoinWatchlist = () => {
     }
 
     fetchData()
-  }, [])
+  }, [watchlist])
 
-  return (
-    <div></div>
-  )
+  const renderCoins = () => {
+
+    if (isLoading) {
+      return <div>Loading...</div>
+  }
+    return ( <ul class="coin-list-group" >
+      {coins.map(coin => {
+      return <Coin key={coin.id} coin={coin} />
+      })}
+    </ul>
+    )
+}
+
+return <div> {renderCoins()} </div>
+ 
 }
 
 export default DisplayCoinWatchlist
