@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import CoinWatchList from "./pages/CoinWatchList"
 import {WatchlistContextProvider} from './context/WatchlistContext'
+import ArticleList from "./pages/ArticleList";
 
 function App() {
   const [users, setUsers] = useState([]);
@@ -30,8 +31,10 @@ function App() {
   return ( <div className="App">   
  <WatchlistContextProvider >
     
-    
-  <CoinWatchList/>
+   
+  {/* <CoinWatchList/> */}
+
+  <ArticleList/>
     {/* <ul>
       {userList}
     </ul> */}
