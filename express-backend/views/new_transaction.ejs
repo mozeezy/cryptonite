@@ -11,18 +11,18 @@
 
     <form action="/api/transactions" method="POST">
       <label>Select coin:</label>
-      <select>
+      <select name="coins">
         <option value="btc">Bitcoin</option>
         <option value="ltc">Litecoin</option>
         <option value="eth">Ethereum</option></select
       ><br /><br />
       <label>Select action:</label>
-      <select>
+      <select name="action">
         <option value="buy">Buy</option>
         <option value="sell">Sell</option></select
       ><br /><br />
       <label>How many(in dollars)?</label>
-      <input type="number" /> <br /><br />
+      <input name="dollarPrice" type="number" /> <br /><br />
 
       <button type="submit">Submit Transaction</button>
     </form>
