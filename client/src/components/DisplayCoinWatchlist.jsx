@@ -8,7 +8,8 @@ import Coin from './Coin'
 const DisplayCoinWatchlist = () => {
 
   const [coins, setCoins] = useState([]);
-  const { watchlist } = useContext(WatchlistContext);
+  const { watchlist, deleteCoin } = useContext(WatchlistContext);
+  console.log(watchlist)
   const [isLoading, setIsLoading] = useState(false);
 
 
@@ -25,6 +26,7 @@ const DisplayCoinWatchlist = () => {
 
       });
       setCoins(response.data)
+      setIsLoading(false)
     }
 
     fetchData()
@@ -35,9 +37,9 @@ const DisplayCoinWatchlist = () => {
     if (isLoading) {
       return <div>Loading...</div>
   }
-    return ( <ul class="coin-list-group" >
+    return ( <ul >
       {coins.map(coin => {
-      return <Coin key={coin.id} coin={coin} />
+      return <Coin key={coin.id} coin={coin} deleteCoin={deleteCoin}/>
       })}
     </ul>
     )

@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 // import { BrowserRouter, Router } from "react-router-dom";
 import axios from "axios";
-import coinWatchList from "./pages/coinWatchList"
+import CoinWatchList from "./pages/CoinWatchList"
+import {WatchlistContextProvider} from './context/WatchlistContext'
+
 function App() {
   const [users, setUsers] = useState([]);
 
@@ -25,13 +27,18 @@ function App() {
   //     </li>
   //   ));
 
-  return <div className="App">   
-
-  <coinWatchList/>
+  return ( <div className="App">   
+ <WatchlistContextProvider >
+    
+    
+  <CoinWatchList/>
     {/* <ul>
       {userList}
     </ul> */}
-  </div>;
+    </WatchlistContextProvider>
+  </div>
+  );
+
 }
 
 export default App;
