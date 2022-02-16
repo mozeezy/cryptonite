@@ -9,6 +9,7 @@ module.exports = (db) => {
       .catch((err) => err);
   };
 
+
   return {
     getAllTransactions,
   };
