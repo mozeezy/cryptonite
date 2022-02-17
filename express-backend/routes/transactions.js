@@ -4,6 +4,12 @@ const router = express.Router();
 const axios = require("axios");
 
 module.exports = ({ getTransactions, addNewTransaction }) => {
+  router.get("/", (req, res) => {
+    getTransactions()
+      .then((transactions) => res.json(transactions))
+      .catch((err) => ({ error: err.message }));
+  });
+
   router.get("/new-transaction", (req, res) => {
     axios
       .get(

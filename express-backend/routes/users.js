@@ -4,22 +4,29 @@ const router = express.Router();
 const bcrypt = require("bcryptjs");
 
 // this module receives the destructured dbHelpers object.
-module.exports = (
-  {
-    addUser,
-    getUserByEmail,
-    getUserById,
-    getAllTransactions,
-    getTransactionById,
-  }
-) => {
+module.exports = ({
+  addUser,
+  getUsers,
+  getUserByEmail,
+  getUserById,
+  getAllTransactions,
+  getTransactionById,
+}) => {
   // user logout
   router.get("/logout", (req, res) => {
     res.send("Successfully logged out!");
   });
+
   // user register page
-  router.get("/", (req, res) => {
+  router.get("/register", (req, res) => {
     res.render("user_signup");
+  });
+
+  // get the users JSON data.
+  router.get("/", (req, res) => {
+    getUsers()
+      .then((users) => res.json(users))
+      .catch((err) => res.json({ error: err.message }));
   });
   //Logs in user.
   router.get("/:id", (req, res) => {
