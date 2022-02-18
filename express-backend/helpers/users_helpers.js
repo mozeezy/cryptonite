@@ -66,6 +66,17 @@ module.exports = (db) => {
       .catch((err) => err);
   };
 
+  const updateBalance = (id, amount) => {
+    const query = {
+      text: `UPDATE users SET e_wallet = $1 WHERE id = $2;`,
+      values: [amount, id],
+    };
+    return db
+      .query(query)
+      .then((result) => result.rows)
+      .catch((err) => err);
+  };
+
   return {
     getUsers,
     getUserByEmail,
@@ -73,5 +84,6 @@ module.exports = (db) => {
     getUserById,
     getAllTransactions,
     getTransactionById,
+    updateBalance
   };
 };

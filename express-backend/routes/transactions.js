@@ -4,6 +4,7 @@ const router = express.Router();
 const axios = require("axios");
 
 module.exports = ({ getTransactions, addNewTransaction }) => {
+  // Get the transactions JSON data.
   router.get("/", (req, res) => {
     getTransactions()
       .then((transactions) => res.json(transactions))
@@ -37,9 +38,10 @@ module.exports = ({ getTransactions, addNewTransaction }) => {
 
     today = mm + "/" + dd + "/" + yyyy;
 
-    console.log("today is: ", today);
+    
     addNewTransaction(coins, action, dollarPrice, today).then((data) => {
-      console.log("I AM DATA >>>>>", data).error((err) => console.log(err));
+      console.log("I AM DATA >>>>>", data)
+      .error((err) => console.log(err));
     });
   });
   return router;

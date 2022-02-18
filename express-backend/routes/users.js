@@ -11,6 +11,7 @@ module.exports = ({
   getUserById,
   getAllTransactions,
   getTransactionById,
+  updateBalance,
 }) => {
   // user logout
   router.get("/logout", (req, res) => {
@@ -28,6 +29,18 @@ module.exports = ({
       .then((users) => res.json(users))
       .catch((err) => res.json({ error: err.message }));
   });
+
+  // adds balance amount
+  router.get("/add-balance", (req, res) => {
+    res.render("add_balance");
+  });
+
+  router.post("/add-balance", (req, res) => {
+    const { dollarAmount } = req.body;
+
+    console.log(dollarAmount);
+  });
+
   //Logs in user.
   router.get("/:id", (req, res) => {
     const userID = req.params.id;

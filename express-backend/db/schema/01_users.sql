@@ -5,6 +5,6 @@ CREATE TABLE users(
     last_name VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL,
     password_digest VARCHAR(255) NOT NULL,
-    e_wallet MONEY,
+    e_wallet MONEY DEFAULT 20000,
     is_admin BOOLEAN NOT NULL DEFAULT false
 );

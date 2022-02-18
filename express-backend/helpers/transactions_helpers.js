@@ -20,6 +20,7 @@ module.exports = (db) => {
       .catch((err) => err);
   };
 
+
   return {
     getTransactions,
     addNewTransaction,
