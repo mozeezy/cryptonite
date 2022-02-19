@@ -66,6 +66,22 @@ module.exports = (
   router.post("/register", (req, res) => {
     const { firstName, lastName, email, password } = req.body;
     console.log("LOGGG", req.body)
+    
+    const hashMyPassword = (password) => {
+      return bcrypt.hash(password, 10);
+    } 
+    
+    // Add the user to the database.
+    hashMyPassword(password).then((result) => {
+      addUser(firstName, lastName, email, result)
+    })
+    // .then((data) => {
+    //   console.log("data log", data)
+    //     return res.redirect(`/api/users/${data.id}`);
+    //   })
+    //   .catch((err) => console.log(err));
+    });
+    
     // // if the inputs are empty, do not prompt the user to login.
     // if (!firstName || !lastName || !email || !password) {
     //   return res.status(400).send({ message: "Credentials incomplete!" });
@@ -78,16 +94,5 @@ module.exports = (
 
     // });
     // Hash the incoming password from the field before storing it in the database.
-    const hashMyPassword = bcrypt.hash(password, 10);
-
-    // Add the user to the database.
-    addUser(firstName, lastName, email, hashMyPassword)
-      .then((data) => {
-        console.log("data log", data)
-        return res.redirect(`/api/users/${data.id}`);
-      })
-      .catch((err) => console.log(err));
-  });
-
-  return router;
+    return router;
 };
