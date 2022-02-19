@@ -15,6 +15,7 @@ module.exports = ({
 }) => {
   // user logout
   router.get("/logout", (req, res) => {
+    res.clearCookie("user_id");
     res.send("Successfully logged out!");
   });
 
@@ -32,13 +33,17 @@ module.exports = ({
 
   // adds balance amount
   router.get("/add-balance", (req, res) => {
-    res.render("add_balance");
+    const userID = req.params.id;
+    const session = req.session;
+    if (session) {
+      res.render("add_balance");
+    }
   });
 
-  router.post("/add-balance", (req, res) => {
-    const { dollarAmount } = req.body;
-
+  router.post("/new-balance", (req, res) => {
+    const { dollarAmount, userId } = req.body;
     console.log(dollarAmount);
+    console.log(userId);
   });
 
   //Logs in user.
@@ -50,6 +55,9 @@ module.exports = ({
     }
     // Get the User.
     getUserById(userID).then((data) => {
+      const session = res.cookie("user_id", `${userID}`);
+      console.log("COOKIE IS SET", session);
+
       const loggedUser = data;
       if (loggedUser.is_admin === true) {
         //

@@ -7,13 +7,14 @@
     <title>User Transactions</title>
   </head>
   <body>
-    <%- include('./partials/_nav.ejs')%>
-    <%- include('./partials/_new_transaction.ejs')%>
-    <%- include('./partials/_add_balance.ejs')%>
+    <%- include('./partials/_nav.ejs')%> <%-
+    include('./partials/_new_transaction.ejs')%> <%-
+    include('./partials/_add_balance.ejs')%>
     <main>
       <h1>Your Recent Transactions</h1>
+      
       <table>
-        <tr style ="background-color: orange;">
+        <tr style="background-color: orange">
           <th>E-Wallet Balance</th>
           <th>Amount purchased</th>
           <th>Coins purchased</th>

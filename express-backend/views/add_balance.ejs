@@ -10,9 +10,10 @@
     <h1>Add Balance to your Wallet!</h1>
 
     <form action="/api/users/new-balance" method="POST">
-      <label>Add Amount:</label>
+      <label>Add Amount(in dollars):</label>
       <input type="number" name="dollarAmount" placeholder="Add Balance" />
-      <button>Submit</button>
+      <input type="hidden" name="userId" />
+      <button type="submit">Submit</button>
     </form>
   </body>
 </html>
