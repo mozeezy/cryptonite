@@ -15,8 +15,8 @@ module.exports = ({
 }) => {
   // user logout
   router.get("/logout", (req, res) => {
-    res.clearCookie("user_id");
-    res.send("Successfully logged out!");
+    req.session = null;
+    res.redirect("/api/users/register");
   });
 
   // user register page
@@ -33,10 +33,13 @@ module.exports = ({
 
   // adds balance amount
   router.get("/add-balance", (req, res) => {
-    const userID = req.params.id;
-    const session = req.session;
-    if (session) {
+    const userID = req.session.user_id;
+    if (userID) {
       res.render("add_balance");
+    } else {
+      res
+        .status(403)
+        .json({ error: "You must login to access this functionality!" });
     }
   });
 
@@ -47,42 +50,55 @@ module.exports = ({
   });
 
   //Logs in user.
-  router.get("/:id", (req, res) => {
+  router.get("/login/:id", (req, res) => {
     const userID = req.params.id;
     // Confirm that the id parameter entered is a number.
     if (isNaN(userID)) {
       res.status(403).json({ error: "User doesn't exist" });
+    } else {
+      req.session.user_id = userID;
+      res.redirect("/api/users/transactions");
     }
-    // Get the User.
-    getUserById(userID).then((data) => {
-      const session = res.cookie("user_id", `${userID}`);
-      console.log("COOKIE IS SET", session);
+  });
 
-      const loggedUser = data;
-      if (loggedUser.is_admin === true) {
-        //
-        getAllTransactions()
-          .then((data) => {
-            const usersTransactions = data;
-            const templateVars = {
-              usersTransactions,
-            };
-            res.render("admin_transactions", templateVars);
-          })
-          .catch((err) => console.log(err));
-      } else {
-        // get the transaction for each user.
-        getTransactionById(userID)
-          .then((data) => {
-            const usersTransactions = data;
-            const templateVars = {
-              usersTransactions,
-            };
-            res.render("user_transaction", templateVars);
-          })
-          .catch((err) => console.log(err));
-      }
-    });
+  router.get("/transactions", (req, res) => {
+    const userID = req.session.user_id;
+
+    if (userID) {
+      // Get the User.
+      getUserById(userID).then((data) => {
+        if (!req.session.user_id) {
+        }
+        const loggedUser = data;
+        if (loggedUser.is_admin === true) {
+          //
+          getAllTransactions()
+            .then((data) => {
+              const usersTransactions = data;
+              const templateVars = {
+                usersTransactions,
+              };
+              res.render("admin_transactions", templateVars);
+            })
+            .catch((err) => console.log(err));
+        } else {
+          // get the transaction for each user.
+          getTransactionById(userID)
+            .then((data) => {
+              const usersTransactions = data;
+              const templateVars = {
+                usersTransactions,
+              };
+              res.render("user_transaction", templateVars);
+            })
+            .catch((err) => console.log(err));
+        }
+      });
+    } else {
+      return res
+        .status(403)
+        .json({ err: "You must be logged in to see this page." });
+    }
   });
 
   // redirect new user to their transactions.
