@@ -4,6 +4,7 @@ const path = require("path");
 const cookieParser = require("cookie-parser");
 const cookieSession = require("cookie-session");
 const logger = require("morgan");
+const cors = require("cors");
 const db = require("./db/index"); // connecting to the database => the "db" variable represents that connection.
 const dbHelpers = require("./helpers/users_helpers")(db); // using the database we created inside the helpers functions. db_helpers.js then returns an object containing the different functions.
 
@@ -22,6 +23,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
+app.use(cors());
 
 app.use("/", indexRouter);
 app.use("/api/users", usersRouter(dbHelpers, db)); // this route receives the db_helpers functions.

@@ -3,10 +3,12 @@ const app = require("../app");
 const router = express.Router();
 const bcrypt = require("bcryptjs");
 
+
 // this module receives the destructured dbHelpers object.
 module.exports = (
   {
     addUser,
+    getUsers,
     getUserByEmail,
     getUserById,
     getAllTransactions,
@@ -20,7 +22,9 @@ module.exports = (
   });
   // user register page
   router.get("/", (req, res) => {
-    res.render("user_signup");
+    getUsers()
+      .then((users) => res.json(users))
+      .catch((err) => res.json({ error: err.message }));
   });
   //Logs in user.
   router.get("/:id", (req, res) => {
@@ -60,28 +64,29 @@ module.exports = (
 
   // redirect new user to their transactions.
   router.post("/register", (req, res) => {
-    const { fName, lName, email, password } = req.body;
+    const { firstName, lastName, email, password } = req.body;
+    console.log("LOGGG", req.body)
+    // // if the inputs are empty, do not prompt the user to login.
+    // if (!firstName || !lastName || !email || !password) {
+    //   return res.status(400).send({ message: "Credentials incomplete!" });
+    // }
+    // // if the user signs in with an existing email, send a message that user exists
+    // getUserByEmail(email).then(async (data) => {
+    //   if (data) {
+    //     return res.status(400).send({ error: "User already exists!" });
+    //   }
 
-    // if the inputs are empty, do not prompt the user to login.
-    if (!fName || !lName || !email || !password) {
-      return res.status(400).send({ message: "Credentials incomplete!" });
-    }
-    // if the user signs in with an existing email, send a message that user exists
-    getUserByEmail(email).then(async (data) => {
-      if (data) {
-        return res.status(400).send({ error: "User already exists!" });
-      }
+    // });
+    // Hash the incoming password from the field before storing it in the database.
+    const hashMyPassword = bcrypt.hash(password, 10);
 
-      // Hash the incoming password from the field before storing it in the database.
-      const hashMyPassword = await bcrypt.hash(password, 10);
-
-      // Add the user to the database.
-      addUser(fName, lName, email, hashMyPassword)
-        .then((data) => {
-          return res.redirect(`/api/users/${data.id}`);
-        })
-        .catch((err) => console.log(err));
-    });
+    // Add the user to the database.
+    addUser(firstName, lastName, email, hashMyPassword)
+      .then((data) => {
+        console.log("data log", data)
+        return res.redirect(`/api/users/${data.id}`);
+      })
+      .catch((err) => console.log(err));
   });
 
   return router;
