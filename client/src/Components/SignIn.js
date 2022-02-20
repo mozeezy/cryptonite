@@ -88,8 +88,8 @@ const SignIn = (props) => {
         email,
         password,
       }).then((result) => {
-        if(result.data.name) {
-          setUser(result.data.name);
+        if(result.data.first_name) {
+          setUser(result.data.first_name);
         } else { 
           setUser(result.data.message);
         }

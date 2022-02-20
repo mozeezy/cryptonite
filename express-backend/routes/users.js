@@ -77,26 +77,46 @@ module.exports = (
     });
   });
 
+  // router.post("/login", (req, res) => {
+  //   const { email, password } = req.body;
+  //   db.query("SELECT password_digest FROM users WHERE email = $1", [email])
+  //   .then((result) => {
+  //     console.log( "result", result.rows[0].password_digest)
+  //     if (bcrypt.compareSync(password, result.rows[0].password_digest))
+  //       db.query(
+  //         "SELECT first_name FROM users WHERE email =$1 AND password_digest = $2",
+  //         [email, result.rows[0].password_digest]
+  //       ).then((name) => {
+  //         console.log(name.rows[0].first_name);
+  //         if (name.rows[0].first_name.length > 0) {
+  //           console.log("hey")
+  //           res.send({ name: name.rows[0].first_name });
+  //           return;
+  //         } else {
+  //           res.send({ message: "User Not Found" });
+  //           return;
+  //         }
+  //       });
+  //   })
+  // })
+
+
   router.post("/login", (req, res) => {
     const { email, password } = req.body;
-    db.query("SELECT password_digest FROM users WHERE email = $1", [email])
+    
+    db.query("SELECT * FROM users WHERE email = $1", [email])
     .then((result) => {
-      console.log( "result", result.rows[0].password_digest)
-      if (bcrypt.compareSync(password, result.rows[0].password_digest))
-        db.query(
-          "SELECT first_name FROM users WHERE email =$1 AND password_digest = $2",
-          [email, result.rows[0].password_digest]
-        ).then((name) => {
-          console.log(name.rows[0].first_name);
-          if (name.rows[0].first_name.length > 0) {
-            console.log("hey")
-            res.send({ name: name.rows[0].first_name });
-            return;
+      if(result.rows.length > 0) {
+        bcrypt.compare(password, result.rows[0].password_digest, (err, response) => {
+          if(response) {
+            res.send(result.rows[0])
           } else {
-            res.send({ message: "User Not Found" });
-            return;
+            res.send({ message: "Username/Password Combination is Incorrect!" });
           }
         });
+      } else { 
+        res.send({ message: "User Does Not Exist"})
+      }
     })
   })
 
