@@ -15,7 +15,7 @@
       
       <table>
         <tr style="background-color: orange">
-          <th>E-Wallet Balance</th>
+          <th>E-Wallet Balance(in Dollars)</th>
           <th>Amount purchased</th>
           <th>Coins purchased</th>
           <th>Amount of coins purchased/sold</th>
@@ -24,9 +24,10 @@
         </tr>
 
         <% for (let transaction of usersTransactions) { %>
+        <h1>Your current balance is: $<%= transaction.e_wallet %></h1>
         <tr>
-          <td><%= transaction.e_wallet %></td>
-          <td><%= transaction.amount %></td>
+          <td> $<%= transaction.e_wallet %></td>
+          <td> $<%= transaction.amount %></td>
           <td><%= transaction.coin_name %></td>
           <td><%= transaction.coin_amount %></td>
           <% if (transaction.buy_or_sell === 'buy') { %>

@@ -44,9 +44,13 @@ module.exports = ({
   });
 
   router.post("/new-balance", (req, res) => {
-    const { dollarAmount, userId } = req.body;
-    console.log(dollarAmount);
-    console.log(userId);
+    const { dollarAmount } = req.body;
+    const userID = req.session.user_id;
+    updateBalance(dollarAmount, userID)
+      .then((data) => {
+        res.redirect("/api/users/transactions");
+      })
+      .catch((err) => console.log(err));
   });
 
   //Logs in user.
@@ -122,7 +126,7 @@ module.exports = ({
       addUser(fName, lName, email, hashMyPassword)
         .then((data) => {
           console.log(data);
-          return res.redirect(`/api/users/${data.id}`);
+          return res.redirect(`/api/users/login/${data.id}`);
         })
         .catch((err) => console.log(err));
     });

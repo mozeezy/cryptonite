@@ -5,7 +5,7 @@ DROP TABLE IF EXISTS transactions CASCADE;
 
 CREATE TABLE transactions (
   id SERIAL PRIMARY KEY NOT NULL,
-  amount MONEY,
+  amount DECIMAL,
   created_at TIMESTAMP,
   buy_or_sell VARCHAR(255) NOT NULL CONSTRAINT buy_sell CHECK (buy_or_sell IN ('buy', 'sell')),
   coin_name VARCHAR(255) NOT NULL,
