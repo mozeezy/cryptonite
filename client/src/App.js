@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useReducer } from "react";
 import axios from "axios";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { makeStyles } from "@material-ui/core";
@@ -8,29 +8,9 @@ import HomePage from "./Pages/HomePage";
 import CoinPage from "./Pages/CoinPage";
 import LandingPage from "./Pages/LandingPage";
 import Register from "./Components/Register";
+import { UserContext } from "./UserContext";
 
 function App() {
-  // const [users, setUsers] = useState([]);
-
-  // useEffect(() => {
-  //   axios({
-  //     method: "GET",
-  //     url: "/api/users",
-  //   })
-  //     .then((result) => {
-  //       console.log(result.data);
-  //       setUsers(result.data);
-  //     })
-  //     .catch((err) => console.log(`Error: error.message`));
-  // }, []);
-
-  // const userList =
-  //   users &&
-  //   users.map((user) => (
-  //     <li key={user.id}>
-  //       {user.first_name} {user.last_name} {user.email}{" "}
-  //     </li>
-  //   ));
 
     const useStyles = makeStyles(() => ({
       App: {
@@ -42,15 +22,26 @@ function App() {
 
     const classes = useStyles();
 
+    const [user, setUser] = useState(null)
+
+      useEffect(() => {
+        axios.get(`http://localhost:3001/api/users/login`).then((res) => {
+          setUser(res.data);
+        });
+      }, [user]);
+    
+
   return (
     <BrowserRouter>
       <div className={classes.App}>
+          <UserContext.Provider value={user}>
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="register" element={<Register />} />
           <Route path="home" element={<HomePage />} />
           <Route path="home/coins/:id" element={<CoinPage />} />
         </Routes>
+          </UserContext.Provider>
       </div>
     </BrowserRouter>
   );

@@ -70,6 +70,11 @@ const LandingPage = () => {
   const classes = useStyles();
   const navigate = useNavigate();
   const { mode, transition, back } = useVisualMode(SIGNIN);
+
+  const changePage = (e) => {
+    navigate(`/home`)
+    e.preventDefault();
+  }
   
   return (
     <Grid container component="main" className={classes.root}>
@@ -105,7 +110,7 @@ const LandingPage = () => {
             >
               <Button
                 style={{ color: "red" }}
-                onClick={() => navigate(`/home`)}
+                onClick={changePage}
               >
                 Browse Coins
               </Button>

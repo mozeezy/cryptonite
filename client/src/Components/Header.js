@@ -1,7 +1,8 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { AppBar, Button, Container, Toolbar, Typography, makeStyles, createTheme, Select, MenuItem, ThemeProvider } from '@material-ui/core'
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { CryptoState } from '../CryptoContext';
+import { UserContext } from '../UserContext';
 
 
 const useStyles = makeStyles(() => ({
@@ -12,7 +13,7 @@ const useStyles = makeStyles(() => ({
 }));
 
 const Header = () => {
-
+  const user = useContext(UserContext);
   const classes = useStyles();
   const navigate = useNavigate();
   const { currency, setCurrency } = CryptoState()
@@ -27,7 +28,7 @@ const Header = () => {
       type: "dark"
     },
   })
-
+  console.log(user)
   return (
     <ThemeProvider theme={darkTheme}>
       <AppBar color="transparent" position="static">

@@ -96,18 +96,6 @@ const SignIn = (props) => {
       });
   };
 
-useEffect(() => {
-  axios.defaults.withCredentials = true;
-  axios
-  .get(`http://localhost:3001/api/users/login`)
-  .then((response) => {
-    setUser(response.data.user[0].first_name)
-  })
-    .catch((err) => {
-      console.log(err);
-    });
-}, []);
-
 
   return (
     <Grid
