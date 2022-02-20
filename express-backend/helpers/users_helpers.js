@@ -66,12 +66,11 @@ module.exports = (db) => {
       .catch((err) => err);
   };
 
-  const updateBalance = (amount, id) => {
-    return getUserById(id).then((data) => {
-      console.log(data);
+  const updateBalance = (amount, userId) => {
+    return getUserById(userId).then((data) => {
       const query = {
         text: `UPDATE users SET e_wallet = $1 WHERE id = $2;`,
-        values: [Number(data.e_wallet) + Number(amount), id],
+        values: [Number(data.e_wallet) + Number(amount), userId],
       };
       return db
         .query(query)

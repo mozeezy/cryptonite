@@ -55,10 +55,14 @@ module.exports = ({
 
     today = mm + "/" + dd + "/" + yyyy;
 
-    addTransaction(dollarAmount, today, userID).then((data) => {
-      console.log(data);
-      return res.redirect(`/api/users/login/${userID}`);
-    });
+    addTransaction(dollarAmount, today, userID)
+      .then((data) => {
+        console.log(data);
+          updateBalance(dollarAmount, userID).then((data) => {
+            return res.redirect(`/api/users/login/${userID}`);
+          });
+      })
+      .catch((err) => console.log(err));
   });
 
   //Logs in user.
@@ -97,6 +101,7 @@ module.exports = ({
           // get the transaction for each user.
           getTransactionById(userID)
             .then((data) => {
+              console.log(data);
               const usersTransactions = data;
               const templateVars = {
                 usersTransactions,
