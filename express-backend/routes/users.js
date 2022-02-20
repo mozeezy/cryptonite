@@ -21,6 +21,7 @@ module.exports = ({
 
   // user register page
   router.get("/register", (req, res) => {
+    req.session = null;
     res.render("user_signup");
   });
 
