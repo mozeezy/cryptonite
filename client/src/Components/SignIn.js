@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
@@ -84,7 +84,7 @@ const SignIn = (props) => {
   const userCheck = (e) => {
     e.preventDefault();
     axios
-      .post(`http://localhost:3001/api/users/login`, {
+    .post(`http://localhost:3001/api/users/login`, {
         email,
         password,
       }).then((result) => {
@@ -96,7 +96,17 @@ const SignIn = (props) => {
       });
   };
 
-
+useEffect(() => {
+  axios.defaults.withCredentials = true;
+  axios
+  .get(`http://localhost:3001/api/users/login`)
+  .then((response) => {
+    setUser(response.data.user[0].first_name)
+  })
+    .catch((err) => {
+      console.log(err);
+    });
+}, []);
 
 
   return (

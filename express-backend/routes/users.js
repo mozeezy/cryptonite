@@ -1,8 +1,34 @@
 const express = require("express");
-const app = require("../app");
+const app = express();
 const router = express.Router();
 const bcrypt = require("bcryptjs");
+const cookieParser = require("cookie-parser");
+const cookieSession = require("cookie-session");
+const expressSession = require("express-session");
+const bodyParser = require("body-parser");
+const cors = require("cors");
 
+app.use(cookieParser());
+app.use(
+  cors({
+    origin: ["http://localhost:3000"],
+    methods: ["GET", "POST"],
+    credentials: true,
+  })
+);
+app.use(cookieParser());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(
+  expressSession({
+    key: "userId",
+    secret: "project",
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      expires: 60 * 60 * 24,
+    },
+  })
+);
 
 // this module receives the destructured dbHelpers object.
 module.exports = (
@@ -100,6 +126,12 @@ module.exports = (
   //   })
   // })
 
+  router.get("/login", (req, res) => {
+    if(req.session.user) {
+      return res.send({loggedIn: true, user: req.session.user});
+    } 
+      return res.send({loggedIn: false});
+  })
 
   router.post("/login", (req, res) => {
     const { email, password } = req.body;
@@ -109,6 +141,8 @@ module.exports = (
       if(result.rows.length > 0) {
         bcrypt.compare(password, result.rows[0].password_digest, (err, response) => {
           if(response) {
+            req.session.user = result;
+            console.log(result.rows[0]);
             res.send(result.rows[0])
           } else {
             res.send({ message: "Username/Password Combination is Incorrect!" });

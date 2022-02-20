@@ -87,7 +87,8 @@ const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState("");
-  
+  axios.defaults.withCredentials = true;
+
   const newUser = () => {
     axios
       .post(`http://localhost:3001/api/users/register`, {
