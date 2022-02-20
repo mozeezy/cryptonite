@@ -12,20 +12,28 @@ module.exports = ({ getTransactions, addNewTransaction }) => {
   });
 
   router.get("/new-transaction", (req, res) => {
-    axios
-      .get(
-        "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&sparkline=false"
-      )
-      .then((response) => {
-        const coinsList = response.data;
-        const templateVars = {
-          coinsList,
-        };
-        res.render("new_transaction", templateVars);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    const userID = req.session.user_id;
+    if (userID) {
+      axios
+        .get(
+          "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&sparkline=false"
+        )
+        .then((response) => {
+          const coinsList = response.data;
+          console.log(coinsList);
+          const templateVars = {
+            coinsList,
+          };
+          res.render("new_transaction", templateVars);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } else {
+      res
+        .status(403)
+        .json({ error: "You must be logged in to access this functionality" });
+    }
   });
 
   router.post("/", (req, res) => {
@@ -38,10 +46,8 @@ module.exports = ({ getTransactions, addNewTransaction }) => {
 
     today = mm + "/" + dd + "/" + yyyy;
 
-    
     addNewTransaction(coins, action, dollarPrice, today).then((data) => {
-      console.log("I AM DATA >>>>>", data)
-      .error((err) => console.log(err));
+      console.log("I AM DATA >>>>>", data).error((err) => console.log(err));
     });
   });
   return router;

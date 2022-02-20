@@ -12,6 +12,7 @@ module.exports = ({
   getAllTransactions,
   getTransactionById,
   updateBalance,
+  addTransaction,
 }) => {
   // user logout
   router.get("/logout", (req, res) => {
@@ -47,11 +48,17 @@ module.exports = ({
   router.post("/new-balance", (req, res) => {
     const { dollarAmount } = req.body;
     const userID = req.session.user_id;
-    updateBalance(dollarAmount, userID)
-      .then((data) => {
-        res.redirect("/api/users/transactions");
-      })
-      .catch((err) => console.log(err));
+    let today = new Date();
+    const dd = String(today.getDate()).padStart(2, "0");
+    const mm = String(today.getMonth() + 1).padStart(2, "0");
+    const yyyy = today.getFullYear();
+
+    today = mm + "/" + dd + "/" + yyyy;
+
+    addTransaction(dollarAmount, today, userID).then((data) => {
+      console.log(data);
+      return res.redirect(`/api/users/login/${userID}`);
+    });
   });
 
   //Logs in user.

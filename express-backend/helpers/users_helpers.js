@@ -79,6 +79,16 @@ module.exports = (db) => {
         .catch((err) => err);
     });
   };
+  const addTransaction = (amount, date, id) => {
+    const query = {
+      text: `INSERT into transactions (amount, created_at, buy_or_sell, user_id) VALUES ($1, $2, 'reload', $3) RETURNING *;`,
+      values: [amount, date, id],
+    };
+    return db
+      .query(query)
+      .then((result) => result.rows)
+      .then((err) => err);
+  };
 
   return {
     getUsers,
@@ -88,5 +98,6 @@ module.exports = (db) => {
     getAllTransactions,
     getTransactionById,
     updateBalance,
+    addTransaction,
   };
 };
