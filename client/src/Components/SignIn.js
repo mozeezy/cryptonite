@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from "react";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
@@ -11,11 +11,8 @@ import Grid from "@material-ui/core/Grid";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
-import useVisualMode from "../useVisualMode";
+import axios from "axios";
 
-
-const SIGNIN = "SIGNIN";
-const REGISTER = "REGISTER";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -25,9 +22,9 @@ const useStyles = makeStyles((theme) => ({
     backgroundImage: "url(https://source.unsplash.com/random)",
     backgroundRepeat: "no-repeat",
     backgroundColor:
-    theme.palette.type === "light"
-    ? theme.palette.grey[50]
-    : theme.palette.grey[900],
+      theme.palette.type === "light"
+        ? theme.palette.grey[50]
+        : theme.palette.grey[900],
     backgroundSize: "cover",
     backgroundPosition: "center",
   },
@@ -66,8 +63,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function Copyright() {
-
-  
   return (
     <Typography variant="body2" style={{ color: "red" }} align="center">
       {"Copyright © "}
@@ -80,16 +75,34 @@ function Copyright() {
   );
 }
 
-
 const SignIn = (props) => {
-const { change } = props;
   const classes = useStyles();
-  const { mode, transition, back } = useVisualMode();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [user, setUser] = useState("");
+
+  const userCheck = (e) => {
+    e.preventDefault();
+    axios
+      .post(`http://localhost:3001/api/users/login`, {
+        email,
+        password,
+      }).then((result) => {
+        if(result.data.name) {
+          setUser(result.data.name);
+        } else { 
+          setUser(result.data.message);
+        }
+      });
+  };
+
+
+
 
   return (
     <Grid
-    style={{ backgroundColor: "#14141a" }}
-    item
+      style={{ backgroundColor: "#14141a" }}
+      item
       xs={12}
       sm={8}
       md={5}
@@ -98,13 +111,13 @@ const { change } = props;
       square
     >
       <div className={classes.paper}>
-        <Avatar className={classes.avatar} style={{backgroundColor: "red"}}>
+        <Avatar className={classes.avatar} style={{ backgroundColor: "red" }}>
           <LockOutlinedIcon />
         </Avatar>
         <Typography style={{ color: "red" }} component="h1" variant="h5">
           Sign in
         </Typography>
-        <form className={classes.form} noValidate>
+        <form className={classes.form} >
           <TextField
             style={{ backgroundColor: "white", borderColor: "red" }}
             variant="outlined"
@@ -115,8 +128,9 @@ const { change } = props;
             label="Email Address"
             name="email"
             autoComplete="email"
-            autoFocus
-            noValidate
+            onChange={(e) => {
+              setEmail(e.target.value);
+            }}
           />
           <TextField
             style={{ backgroundColor: "white", borderColor: "red" }}
@@ -129,6 +143,9 @@ const { change } = props;
             type="password"
             id="password"
             autoComplete="current-password"
+            onChange={(e) => {
+              setPassword(e.target.value);
+            }}
           />
           <FormControlLabel
             style={{ color: "red" }}
@@ -140,6 +157,7 @@ const { change } = props;
             fullWidth
             variant="contained"
             className={classes.submit}
+            onClick={userCheck}
           >
             Sign In
           </Button>
@@ -159,9 +177,10 @@ const { change } = props;
             <Copyright />
           </Box>
         </form>
+        <h1>{user}</h1>
       </div>
     </Grid>
   );
-}
+};
 
-export default SignIn
+export default SignIn;

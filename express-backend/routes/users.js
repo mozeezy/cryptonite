@@ -65,34 +65,40 @@ module.exports = (
   // redirect new user to their transactions.
   router.post("/register", (req, res) => {
     const { firstName, lastName, email, password } = req.body;
-    console.log("LOGGG", req.body)
-    
+    console.log("LOGGG", req.body);
+
     const hashMyPassword = (password) => {
       return bcrypt.hash(password, 10);
-    } 
-    
+    };
+
     // Add the user to the database.
     hashMyPassword(password).then((result) => {
-      addUser(firstName, lastName, email, result)
-    })
-    // .then((data) => {
-    //   console.log("data log", data)
-    //     return res.redirect(`/api/users/${data.id}`);
-    //   })
-    //   .catch((err) => console.log(err));
+      addUser(firstName, lastName, email, result);
     });
-    
-    // // if the inputs are empty, do not prompt the user to login.
-    // if (!firstName || !lastName || !email || !password) {
-    //   return res.status(400).send({ message: "Credentials incomplete!" });
-    // }
-    // // if the user signs in with an existing email, send a message that user exists
-    // getUserByEmail(email).then(async (data) => {
-    //   if (data) {
-    //     return res.status(400).send({ error: "User already exists!" });
-    //   }
+  });
 
-    // });
-    // Hash the incoming password from the field before storing it in the database.
-    return router;
+  router.post("/login", (req, res) => {
+    const { email, password } = req.body;
+    db.query("SELECT password_digest FROM users WHERE email = $1", [email])
+    .then((result) => {
+      console.log( "result", result.rows[0].password_digest)
+      if (bcrypt.compareSync(password, result.rows[0].password_digest))
+        db.query(
+          "SELECT first_name FROM users WHERE email =$1 AND password_digest = $2",
+          [email, result.rows[0].password_digest]
+        ).then((name) => {
+          console.log(name.rows[0].first_name);
+          if (name.rows[0].first_name.length > 0) {
+            console.log("hey")
+            res.send({ name: name.rows[0].first_name });
+            return;
+          } else {
+            res.send({ message: "User Not Found" });
+            return;
+          }
+        });
+    })
+  })
+
+  return router;
 };
