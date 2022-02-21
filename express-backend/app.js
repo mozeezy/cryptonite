@@ -3,6 +3,7 @@ const express = require("express");
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const cookieSession = require("cookie-session");
+const cors = require("cors");
 const logger = require("morgan");
 const db = require("./db/index"); // connecting to the database => the "db" variable represents that connection.
 const userHelpers = require("./helpers/users_helpers")(db); // using the database we created inside the helpers functions. db_helpers.js then returns an object containing the different functions.
@@ -29,10 +30,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
-
+app.use(cors());
 app.use("/", indexRouter);
-app.use("/api/users", usersRouter(userHelpers)); // this route receives the db_helpers functions.
-app.use("/api/transactions", transactionsRouter(transactionsHelpers));
+app.use("/api/users", usersRouter(userHelpers, db)); // this route receives the db_helpers functions.
+app.use("/api/transactions", transactionsRouter(transactionsHelpers, db));
 
 // catch 404 and forward to error handler
 

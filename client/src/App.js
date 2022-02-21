@@ -1,34 +1,48 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import React, { useState,  useMemo, useEffect } from "react";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { makeStyles } from "@material-ui/core";
+import "./App.css";
+import HomePage from "./Pages/HomePage";
+import CoinPage from "./Pages/CoinPage";
+import LandingPage from "./Pages/LandingPage";
+import Register from "./Components/Register";
+import { UserContext } from "./UserContext";
+import UseLocalStorage from "./UseLocalStorage"
 
 function App() {
-  const [users, setUsers] = useState([]);
 
-  useEffect(() => {
-    axios({
-      method: "GET",
-      url: "/api/users",
+    const useStyles = makeStyles(() => ({
+      App: {
+        backgroundColor: "#14141a",
+        color: "white",
+        minHeight: "100vh",
+      },
+    }));
+
+    const classes = useStyles();
+
+    const [context, setContext] = UseLocalStorage("User", null)
+
+    const providerValue = useMemo(() => ({ context, setContext}), [context, setContext]);
+    
+    useEffect(() => {
+      localStorage.setItem("User", JSON.stringify(context))
     })
-      .then((result) => {
-        console.log(result.data);
-        setUsers(result.data);
-      })
-      .catch((err) => console.log(`Error: error.message`));
-  }, []);
 
-  const userList =
-    users &&
-    users.map((user) => (
-      <li key={user.id}>
-        {user.first_name} {user.last_name} {user.email}{" "}
-      </li>
-    ));
-
-  return <div className="App">
-    <ul>
-      {userList}
-    </ul>
-  </div>;
+  return (
+    <BrowserRouter>
+      <div className={classes.App}>
+          <UserContext.Provider value={providerValue}>
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="register" element={<Register />} />
+          <Route path="home" element={<HomePage />} />
+          <Route path="home/coins/:id" element={<CoinPage />} />
+        </Routes>
+          </UserContext.Provider>
+      </div>
+    </BrowserRouter>
+  );
 }
 
 export default App;
