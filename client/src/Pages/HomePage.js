@@ -6,7 +6,6 @@ import { UserContext } from "../UserContext";
 
 const HomePage = () => {
   const { context } = useContext(UserContext);
-  console.log("home", JSON.stringify(context, null, 2));
 
   return (
     <>

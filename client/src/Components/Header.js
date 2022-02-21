@@ -28,7 +28,6 @@ const Header = () => {
       type: "dark"
     },
   })
-  console.log( "header", JSON.stringify(context, null, 2))
   return (
     <ThemeProvider theme={darkTheme}>
       <AppBar color="transparent" position="static">

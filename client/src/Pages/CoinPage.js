@@ -63,7 +63,6 @@ const CoinPage = () => {
   const [coin, setCoin] = useState();
   const { currency, symbol } = CryptoState();
   const { context } = useContext(UserContext);
-  console.log("coinpage", JSON.stringify(context, null, 2));
 
 
   useEffect(() => {
