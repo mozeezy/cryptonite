@@ -3,7 +3,24 @@ const app = require("../app");
 const router = express.Router();
 const axios = require("axios");
 
-module.exports = ({ getTransactions, addNewTransaction }) => {
+module.exports = ({
+  getTransactions,
+  addNewTransaction,
+  getUserBalance,
+  updateBalance,
+}) => {
+  // const marketCap = (pricePerShare, numOfShares) => {
+  //   return pricePerShare * numOfShares;
+  // };
+
+  const buy = (balance, amount) => {
+    return balance - amount;
+  };
+
+  const sell = (balance, amount) => {
+    return balance + amount;
+  };
+
   // Get the transactions JSON data.
   router.get("/", (req, res) => {
     getTransactions()
@@ -20,7 +37,6 @@ module.exports = ({ getTransactions, addNewTransaction }) => {
         )
         .then((response) => {
           const coinsList = response.data;
-          console.log(coinsList);
           const templateVars = {
             coinsList,
           };
@@ -37,18 +53,66 @@ module.exports = ({ getTransactions, addNewTransaction }) => {
   });
 
   router.post("/", (req, res) => {
-    const { coins, action, dollarPrice } = req.body;
+    const { coins, action, shares } = req.body;
+    const userID = req.session.user_id;
     console.log("I'M REQ.BODY >>>>", req.body);
     let today = new Date();
     const dd = String(today.getDate()).padStart(2, "0");
     const mm = String(today.getMonth() + 1).padStart(2, "0");
     const yyyy = today.getFullYear();
-
     today = mm + "/" + dd + "/" + yyyy;
+    axios
+      .get(
+        "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&sparkline=false"
+      )
+      .then((response) => {
+        const data = response.data;
+        data.forEach((entry) => {
+          const sharePrice = entry.current_price;
+          const price = sharePrice * shares;
+          getUserBalance(userID).then((result) => {
+            const eWallet = result.e_wallet;
+            if (action === "buy" && eWallet > price) {
+              const buyingPrice = buy(eWallet, price);
+              updateBalance(buyingPrice, userID).then((balance) => {
+                console.log("balance is >>>", balance);
+              });
+            }
+          });
+        });
+      })
+      .catch((err) => res.json({ error: "Invalid request!" }));
 
-    addNewTransaction(coins, action, dollarPrice, today).then((data) => {
-      console.log("I AM DATA >>>>>", data).error((err) => console.log(err));
-    });
+    // getUserBalance(userID)
+    //   .then((data) => {
+    //     const price = coins * dollarPrice;
+    //     if (action === "buy" && data > price) {
+    //       const buyingPrice = buy(data, price);
+    //       return addNewTransaction(coins, action, buyingPrice, today)
+    //         .then((data) => {
+    //           res.redirect(`/api/users/login/${userID}`);
+    //         })
+    //         .catch((err) => err);
+    //     } else if (action === "sell") {
+    //       const sellingPrice = sell(data, price);
+    //       return addNewTransaction(coins, action, sellingPrice, today)
+    //         .then((data) => {
+    //           res.redirect(`/api/users/login/${userID}`);
+    //         })
+    //         .catch((err) => err);
+    //     } else {
+    //       res.json({
+    //         error: "Not sufficient funds to complete the transaction.",
+    //       });
+    //     }
+    //   })
+    //   .catch((err) => console.log(err));
+
+    // addNewTransaction(coins, action, dollarPrice, today)
+    //   .then((data) => {
+    //     console.log("I AM DATA >>>>>", data);
+    //   })
+    //   .error((err) => console.log(err));
   });
   return router;
 };

@@ -78,6 +78,7 @@ module.exports = (db) => {
         .catch((err) => err);
     });
   };
+  
   const addTransaction = (amount, date, id) => {
     const query = {
       text: `INSERT into transactions (amount, created_at, buy_or_sell, user_id) VALUES ($1, $2, 'reload', $3) RETURNING *;`,
