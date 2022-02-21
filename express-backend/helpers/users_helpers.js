@@ -66,6 +66,30 @@ module.exports = (db) => {
       .catch((err) => err);
   };
 
+  const updateBalance = (amount, userId) => {
+    return getUserById(userId).then((data) => {
+      const query = {
+        text: `UPDATE users SET e_wallet = $1 WHERE id = $2;`,
+        values: [Number(data.e_wallet) + Number(amount), userId],
+      };
+      return db
+        .query(query)
+        .then((result) => result.rows)
+        .catch((err) => err);
+    });
+  };
+  
+  const addTransaction = (amount, date, id) => {
+    const query = {
+      text: `INSERT into transactions (amount, created_at, buy_or_sell, user_id) VALUES ($1, $2, 'reload', $3) RETURNING *;`,
+      values: [amount, date, id],
+    };
+    return db
+      .query(query)
+      .then((result) => result.rows)
+      .then((err) => err);
+  };
+
   return {
     getUsers,
     getUserByEmail,
@@ -73,5 +97,7 @@ module.exports = (db) => {
     getUserById,
     getAllTransactions,
     getTransactionById,
+    updateBalance,
+    addTransaction,
   };
 };

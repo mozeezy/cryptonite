@@ -4,58 +4,118 @@ const router = express.Router();
 const bcrypt = require("bcryptjs");
 
 // this module receives the destructured dbHelpers object.
-module.exports = (
-  {
-    addUser,
-    getUserByEmail,
-    getUserById,
-    getAllTransactions,
-    getTransactionById,
-  },
-  db
-) => {
+module.exports = ({
+  addUser,
+  getUsers,
+  getUserByEmail,
+  getUserById,
+  getAllTransactions,
+  getTransactionById,
+  updateBalance,
+  addTransaction,
+}) => {
   // user logout
   router.get("/logout", (req, res) => {
-    res.send("Successfully logged out!");
+    req.session = null;
+    res.redirect("/api/users/register");
   });
+
   // user register page
-  router.get("/", (req, res) => {
+  router.get("/register", (req, res) => {
+    req.session = null;
     res.render("user_signup");
   });
+
+  // get the users JSON data.
+  router.get("/", (req, res) => {
+    getUsers()
+      .then((users) => res.json(users))
+      .catch((err) => res.json({ error: err.message }));
+  });
+
+  // adds balance amount
+  router.get("/add-balance", (req, res) => {
+    const userID = req.session.user_id;
+    if (userID) {
+      res.render("add_balance");
+    } else {
+      res
+        .status(403)
+        .json({ error: "You must login to access this functionality!" });
+    }
+  });
+
+  router.post("/new-balance", (req, res) => {
+    const { dollarAmount } = req.body;
+    const userID = req.session.user_id;
+    let today = new Date();
+    const dd = String(today.getDate()).padStart(2, "0");
+    const mm = String(today.getMonth() + 1).padStart(2, "0");
+    const yyyy = today.getFullYear();
+
+    today = mm + "/" + dd + "/" + yyyy;
+
+    addTransaction(dollarAmount, today, userID)
+      .then((data) => {
+        console.log(data);
+        updateBalance(dollarAmount, userID).then((data) => {
+          return res.redirect(`/api/users/login/${userID}`);
+        });
+      })
+      .catch((err) => console.log(err));
+  });
+
   //Logs in user.
-  router.get("/:id", (req, res) => {
+  router.get("/login/:id", (req, res) => {
     const userID = req.params.id;
     // Confirm that the id parameter entered is a number.
     if (isNaN(userID)) {
       res.status(403).json({ error: "User doesn't exist" });
+    } else {
+      req.session.user_id = userID;
+      res.redirect("/api/users/transactions");
     }
-    // Get the User.
-    getUserById(userID).then((data) => {
-      const loggedUser = data;
-      if (loggedUser.is_admin === true) {
-        //
-        getAllTransactions()
-          .then((data) => {
-            const usersTransactions = data;
-            const templateVars = {
-              usersTransactions,
-            };
-            res.render("admin_transactions", templateVars);
-          })
-          .catch((err) => console.log(err));
-      } else {
-        // get the transaction for each user.
-        getTransactionById(userID)
-          .then((data) => {
-            const usersTransactions = data;
-            const templateVars = {
-              usersTransactions,
-            };
-            res.render("user_transaction", templateVars);
-          })
-          .catch((err) => console.log(err));
-      }
-    });
+  });
+
+  router.get("/transactions", (req, res) => {
+    const userID = req.session.user_id;
+
+    if (userID) {
+      // Get the User.
+      getUserById(userID).then((data) => {
+        if (!req.session.user_id) {
+        }
+        const loggedUser = data;
+        if (loggedUser.is_admin === true) {
+          //
+          getAllTransactions()
+            .then((data) => {
+              const usersTransactions = data;
+              const templateVars = {
+                usersTransactions,
+              };
+              res.render("admin_transactions", templateVars);
+            })
+            .catch((err) => console.log(err));
+        } else {
+          // get the transaction for each user.
+          getTransactionById(userID)
+            .then((data) => {
+              console.log(data);
+              const usersTransactions = data;
+              const templateVars = {
+                usersTransactions,
+              };
+              res.render("user_transaction", templateVars);
+            })
+            .catch((err) => console.log(err));
+        }
+      });
+    } else {
+      return res
+        .status(403)
+        .json({ err: "You must be logged in to see this page." });
+    }
   });
 
   // redirect new user to their transactions.
@@ -78,7 +138,8 @@ module.exports = (
       // Add the user to the database.
       addUser(fName, lName, email, hashMyPassword)
         .then((data) => {
-          return res.redirect(`/api/users/${data.id}`);
+          console.log(data);
+          return res.redirect(`/api/users/login/${data.id}`);
         })
         .catch((err) => console.log(err));
     });

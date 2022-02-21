@@ -5,11 +5,12 @@ const cookieParser = require("cookie-parser");
 const cookieSession = require("cookie-session");
 const logger = require("morgan");
 const db = require("./db/index"); // connecting to the database => the "db" variable represents that connection.
-const dbHelpers = require("./helpers/users_helpers")(db); // using the database we created inside the helpers functions. db_helpers.js then returns an object containing the different functions.
+const userHelpers = require("./helpers/users_helpers")(db); // using the database we created inside the helpers functions. db_helpers.js then returns an object containing the different functions.
+const transactionsHelpers = require("./helpers/transactions_helpers")(db);
 
 const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/users");
-// const transactionsRouter = require("./routes/transactions");
+const transactionsRouter = require("./routes/transactions");
 
 const app = express();
 
@@ -17,6 +18,12 @@ const app = express();
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 
+app.use(
+  cookieSession({
+    name: "session",
+    keys: ["superSecretKey1", "superSecretKey2"],
+  })
+);
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -24,8 +31,8 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/", indexRouter);
-app.use("/api/users", usersRouter(dbHelpers, db)); // this route receives the db_helpers functions.
-// app.use("/api/transactions", transactionsRouter(dbHelpers));
+app.use("/api/users", usersRouter(userHelpers)); // this route receives the db_helpers functions.
+app.use("/api/transactions", transactionsRouter(transactionsHelpers));
 
 // catch 404 and forward to error handler
 

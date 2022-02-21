@@ -22,7 +22,7 @@
           <th>Amount purchased</th>
           <th>Coins purchased</th>
           <th>Amount of coins purchased/sold</th>
-          <th>Buy/Sold</th>
+          <th>Buy/Sold/Reload</th>
           <th>Date of Transaction </th>
       </tr>
 
@@ -40,10 +40,13 @@
       <% if (transaction.buy_or_sell === 'buy') { %>
       <td style="color: red;"><%= transaction.buy_or_sell %></td>
 
-      <% } else { %>
-      <td style="color: green;"> <%= transaction.buy_or_sell %></td>
+      <% } else if (transaction.buy_or_sell === 'sell') { %>
+        <td style="color: green"><%= transaction.buy_or_sell %></td>
 
-      <% } %>
+        <% } else { %>
+        <td style="color: black"><%= transaction.buy_or_sell %></td>
+
+        <% } %>
       <td> <%= transaction.created_at %> </td>
     </tr>
     <% } %>     

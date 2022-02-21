@@ -7,33 +7,38 @@
     <title>User Transactions</title>
   </head>
   <body>
-    <%- include('./partials/_nav.ejs')%>
-    <%- include('./partials/_new_transaction.ejs')%>
+    <%- include('./partials/_nav.ejs')%> <%-
+    include('./partials/_new_transaction.ejs')%> <%-
+    include('./partials/_add_balance.ejs')%>
     <main>
       <h1>Your Recent Transactions</h1>
+
       <table>
-        <tr style ="background-color: orange;">
-          <th>E-Wallet Balance</th>
-          <th>Amount purchased</th>
+        <tr style="background-color: orange">
+          <th>E-Wallet Balance(in Dollars)</th>
           <th>Coins purchased</th>
           <th>Amount of coins purchased/sold</th>
-          <th>Buy/Sold</th>
+          <th>Buy/Sold/Reload</th>
+          <th>Amount purchased</th>
           <th>Date of Transaction</th>
         </tr>
 
         <% for (let transaction of usersTransactions) { %>
         <tr>
-          <td><%= transaction.e_wallet %></td>
-          <td><%= transaction.amount %></td>
+          <td>$<%= transaction.e_wallet %></td>
           <td><%= transaction.coin_name %></td>
           <td><%= transaction.coin_amount %></td>
           <% if (transaction.buy_or_sell === 'buy') { %>
           <td style="color: red"><%= transaction.buy_or_sell %></td>
 
-          <% } else { %>
+          <% } else if (transaction.buy_or_sell === 'sell') { %>
           <td style="color: green"><%= transaction.buy_or_sell %></td>
 
+          <% } else { %>
+          <td style="color: black"><%= transaction.buy_or_sell %></td>
+
           <% } %>
+          <td>$<%= transaction.amount %></td>
           <td><%= transaction.created_at %></td>
         </tr>
         <% } %>
