@@ -12,6 +12,8 @@ import Container from "@material-ui/core/Container";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Header from "./Header";
 import axios from 'axios'
+import { useNavigate } from "react-router-dom";
+
 
 
 
@@ -86,10 +88,10 @@ const Register = () => {
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [user, setUser] = useState("");
-  axios.defaults.withCredentials = true;
+  const navigate = useNavigate();
 
-  const newUser = () => {
+  const newUser = (e) => {
+    e.preventDefault();
     axios
       .post(`http://localhost:3001/api/users/register`, {
         firstName,
@@ -100,6 +102,7 @@ const Register = () => {
       .then((res) => {
         console.log(res);
       });
+      navigate("/")
   }
 
 

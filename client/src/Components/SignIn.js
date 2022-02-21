@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
@@ -84,7 +84,7 @@ const SignIn = (props) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState("");
-  const { context, setContext } = useContext(UserContext)
+  const { setContext } = useContext(UserContext)
   const navigate = useNavigate();
 
   const userCheck = (e) => {

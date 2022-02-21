@@ -7,12 +7,6 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Container } from "@material-ui/core";
 import { useNavigate } from "react-router-dom";
 import SignIn from "../Components/SignIn";
-import useVisualMode from "../useVisualMode";
-import Register from "../Components/Register";
-
-const SIGNIN = "SIGNIN"; 
-const REGISTER = "REGISTER";
-
 
 
 const useStyles = makeStyles((theme) => ({
@@ -69,11 +63,9 @@ const LandingPage = () => {
   
   const classes = useStyles();
   const navigate = useNavigate();
-  const { mode, transition, back } = useVisualMode(SIGNIN);
-
   const changePage = (e) => {
-    navigate(`/home`)
     e.preventDefault();
+    navigate(`/home`)
   }
   
   return (
@@ -127,8 +119,7 @@ const LandingPage = () => {
           </div>
         </Container>
       </Grid>
-      {mode === SIGNIN && <SignIn change={() => transition(REGISTER)}/>}
-      {mode === REGISTER && <Register />}
+     <SignIn />
     </Grid>
   );
 };

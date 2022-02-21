@@ -13,7 +13,7 @@ const useStyles = makeStyles(() => ({
 }));
 
 const Header = () => {
-  const { context } = useContext(UserContext);
+  const { context, setContext } = useContext(UserContext);
   const classes = useStyles();
   const navigate = useNavigate();
   const { currency, setCurrency } = CryptoState()
@@ -41,9 +41,35 @@ const Header = () => {
             >
               Cryto<span style={{ color: "red" }}>Nite</span>
             </Typography>
-            <Button style={{ color: "red" }}>Admin</Button>
-            <Button style={{ color: "red" }}>Register</Button>
-            <Button style={{ color: "red" }}>Login</Button>
+            {context ? (
+              <>
+                <Typography className={classes.nav} variant="h6">
+                  {context.first_name}
+                  <span style={{ color: "red" }}> {context.last_name}</span>
+                </Typography>
+                <Button
+                  onClick={() => {
+                    setContext(null);
+                  }}
+                  style={{ color: "red" }}
+                >
+                  Logout
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button style={{ color: "red" }}>Admin</Button>
+                <Button
+                  onClick={() => navigate("/register")}
+                  style={{ color: "red" }}
+                >
+                  Register
+                </Button>
+                <Button onClick={() => navigate("/")} style={{ color: "red" }}>
+                  Login
+                </Button>
+              </>
+            )}
             <Select
               value={currency}
               onChange={handleChange}

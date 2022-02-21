@@ -1,9 +1,7 @@
-import React, { useState, useEffect, useReducer, useMemo } from "react";
-import axios from "axios";
+import React, { useState,  useMemo } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { makeStyles } from "@material-ui/core";
 import "./App.css";
-import Header from "./Components/Header";
 import HomePage from "./Pages/HomePage";
 import CoinPage from "./Pages/CoinPage";
 import LandingPage from "./Pages/LandingPage";
