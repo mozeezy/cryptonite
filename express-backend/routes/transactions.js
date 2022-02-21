@@ -53,7 +53,7 @@ module.exports = ({
   });
 
   router.post("/", (req, res) => {
-    const { coins, action, shares } = req.body;
+    const { coins, action, shares, pricePerShare } = req.body;
     const userID = req.session.user_id;
     console.log("I'M REQ.BODY >>>>", req.body);
     let today = new Date();
@@ -61,27 +61,12 @@ module.exports = ({
     const mm = String(today.getMonth() + 1).padStart(2, "0");
     const yyyy = today.getFullYear();
     today = mm + "/" + dd + "/" + yyyy;
-    axios
-      .get(
-        "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&sparkline=false"
-      )
-      .then((response) => {
-        const data = response.data;
-        data.forEach((entry) => {
-          const sharePrice = entry.current_price;
-          const price = sharePrice * shares;
-          getUserBalance(userID).then((result) => {
-            const eWallet = result.e_wallet;
-            if (action === "buy" && eWallet > price) {
-              const buyingPrice = buy(eWallet, price);
-              updateBalance(buyingPrice, userID).then((balance) => {
-                console.log("balance is >>>", balance);
-              });
-            }
-          });
-        });
-      })
-      .catch((err) => res.json({ error: "Invalid request!" }));
+
+    const price = shares * pricePerShare;
+
+    getUserBalance(userID).then((data) => {
+      console.log(data.e_wallet);
+    });
 
     // getUserBalance(userID)
     //   .then((data) => {
