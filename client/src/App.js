@@ -32,9 +32,9 @@ function App() {
  <WatchlistContextProvider >
     
    
-  {/* <CoinWatchList/> */}
+  <CoinWatchList/>
 
-  <ArticleList/>
+  {/* <ArticleList/> */}
     {/* <ul>
       {userList}
     </ul> */}

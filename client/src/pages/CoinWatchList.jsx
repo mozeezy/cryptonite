@@ -13,3 +13,4 @@ const coinWatchlist = () => {
 }
 
 export default coinWatchlist
+
