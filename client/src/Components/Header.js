@@ -13,7 +13,7 @@ const useStyles = makeStyles(() => ({
 }));
 
 const Header = () => {
-  const user = useContext(UserContext);
+  const { context } = useContext(UserContext);
   const classes = useStyles();
   const navigate = useNavigate();
   const { currency, setCurrency } = CryptoState()
@@ -28,7 +28,7 @@ const Header = () => {
       type: "dark"
     },
   })
-  console.log(user)
+  console.log( "header", JSON.stringify(context, null, 2))
   return (
     <ThemeProvider theme={darkTheme}>
       <AppBar color="transparent" position="static">

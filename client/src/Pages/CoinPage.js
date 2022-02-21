@@ -1,5 +1,5 @@
 import { makeStyles, Typography, LinearProgress } from "@material-ui/core";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useParams } from "react-router-dom";
 import { SingleCoin } from "../config/api";
 import { CryptoState } from "../CryptoContext";
@@ -7,6 +7,7 @@ import CoinInfo from "../Components/CoinInfo";
 import axios from "axios";
 import ReactHtmlParser from "react-html-parser";
 import Header from "../Components/Header";
+import { UserContext } from "../UserContext";
 
 const useStyles = makeStyles((theme) => ({
   Container: {
@@ -61,6 +62,9 @@ const CoinPage = () => {
   const { id } = useParams();
   const [coin, setCoin] = useState();
   const { currency, symbol } = CryptoState();
+  const { context } = useContext(UserContext);
+  console.log("coinpage", JSON.stringify(context, null, 2));
+
 
   useEffect(() => {
     axios.get(SingleCoin(id)).then((res) => {

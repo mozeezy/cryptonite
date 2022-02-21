@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useReducer } from "react";
+import React, { useState, useEffect, useReducer, useMemo } from "react";
 import axios from "axios";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { makeStyles } from "@material-ui/core";
@@ -22,19 +22,14 @@ function App() {
 
     const classes = useStyles();
 
-    const [user, setUser] = useState(null)
+    const [context, setContext] = useState(null)
 
-      useEffect(() => {
-        axios.get(`http://localhost:3001/api/users/login`).then((res) => {
-          setUser(res.data);
-        });
-      }, [user]);
-    
+    const providerValue = useMemo(() => ({ context, setContext}), [context, setContext]);
 
   return (
     <BrowserRouter>
       <div className={classes.App}>
-          <UserContext.Provider value={user}>
+          <UserContext.Provider value={providerValue}>
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="register" element={<Register />} />

@@ -120,8 +120,9 @@ module.exports = (
   //   })
   // })
 
-  router.get("/login", (req, res) => {
+  router.get("/login/:id", (req, res) => {
     const { email, password } = req.body;
+    const userid = req.params.id
     
   })
 

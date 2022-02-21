@@ -12,6 +12,9 @@ import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import axios from "axios";
+import { UserContext } from "../UserContext";
+import { useContext } from "react";
+import { useNavigate } from "react-router-dom";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -75,11 +78,14 @@ function Copyright() {
   );
 }
 
+
 const SignIn = (props) => {
   const classes = useStyles();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState("");
+  const { context, setContext } = useContext(UserContext)
+  const navigate = useNavigate();
 
   const userCheck = (e) => {
     e.preventDefault();
@@ -90,6 +96,7 @@ const SignIn = (props) => {
       }).then((result) => {
         if(result.data.first_name) {
           setUser(result.data.first_name);
+          setContext(result.data);
         } else { 
           setUser(result.data.message);
         }
@@ -166,7 +173,7 @@ const SignIn = (props) => {
               </Link>
             </Grid>
             <Grid item>
-              <Link href="/register" variant="body2" style={{ color: "red" }}>
+              <Link onClick={() => navigate("/")} variant="body2" style={{ color: "red" }}>
                 {"Don't have an account? Sign Up"}
               </Link>
             </Grid>
