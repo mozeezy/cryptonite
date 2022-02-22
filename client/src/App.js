@@ -10,6 +10,10 @@ import { UserContext } from "./UserContext";
 import UseLocalStorage from "./UseLocalStorage"
 import Transactions from "./Components/Transactions";
 import Order from "./Components/Order";
+import { WatchlistContextProvider } from "./WatchlistContext";
+import ArticleList from "./Pages/ArticleList";
+import ReactChatEngine from "./Pages/ReactChatEngine";
+import CoinWatchlist from "./Pages/CoinWatchList";
 
 function App() {
 
@@ -35,14 +39,17 @@ function App() {
     <BrowserRouter>
       <div className={classes.App}>
         <UserContext.Provider value={providerValue}>
-          <Routes>
-            <Route path="/" element={<LandingPage />} />
-            <Route path="register" element={<Register />} />
-            <Route path="home" element={<HomePage />} />
-            <Route path="orders" element={<Order />} />
-            <Route path="transactions" element={<Transactions />} />
-            <Route path="home/coins/:id" element={<CoinPage />} />
-          </Routes>
+          <WatchlistContextProvider>
+            <Routes>
+              <Route path="/" element={<LandingPage />} />
+              <Route path="register" element={<Register />} />
+              <Route path="home" element={<HomePage />} />
+              <Route path="chat" element={<ReactChatEngine />} />
+              <Route path="watch" element={<CoinWatchlist />} />
+              <Route path="transactions" element={<Transactions />} />
+              <Route path="home/coins/:id" element={<CoinPage />} />
+            </Routes>
+          </WatchlistContextProvider>
         </UserContext.Provider>
       </div>
     </BrowserRouter>
