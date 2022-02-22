@@ -59,16 +59,20 @@ module.exports = ({
   });
 
   router.post("/", (req, res) => {
+    // the inputs from the ejs form
     const { coins, action, shares } = req.body;
     const float = parseFloat(shares).toFixed(2);
     const userID = req.session.user_id;
     console.log("I'M REQ.BODY >>>>", req.body);
+
+    // function to create today's date.
     let today = new Date();
     const dd = String(today.getDate()).padStart(2, "0");
     const mm = String(today.getMonth() + 1).padStart(2, "0");
     const yyyy = today.getFullYear();
     today = mm + "/" + dd + "/" + yyyy;
 
+    // api request to get the price per share for each coin.
     axios
       .get(
         `https://api.coingecko.com/api/v3/coins/${coins}
@@ -80,6 +84,8 @@ module.exports = ({
         console.log(marketCap);
         getUserBalance(userID).then((data) => {
           const eWallet = Math.round(data.e_wallet * 100) / 100;
+
+          // if the user is buying a coin, then update the balance and create a new transaction.
           if (action === "buy" && eWallet > marketCap) {
             const newBalance = buy(eWallet, marketCap);
             updateBalance(newBalance, userID).then((data) => {
@@ -95,10 +101,11 @@ module.exports = ({
               });
               return;
             });
+
+            // if the user is selling
           } else if (action === "sell") {
             getUserCoins(userID).then((response) => {
-              const coinsArr = [];
-              const coinsAmountArr = []
+              const coinsObj = [];
               for (let entry in response) {
                 const userCoins = response[entry].coin_name;
                 const userCoinAmount = response[entry].coin_amount;
