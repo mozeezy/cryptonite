@@ -23,10 +23,6 @@ module.exports = ({
     return balance + amount;
   };
 
-  const coinDifference = (amountFromDB, amountInput) => {
-    return amountFromDB - amountInput;
-  };
-
   // Get the transactions JSON data.
   router.get("/", (req, res) => {
     getTransactions()
@@ -105,28 +101,37 @@ module.exports = ({
             // if the user is selling
           } else if (action === "sell") {
             getUserCoins(userID).then((response) => {
-              const coinsObj = [];
+              let coinsObj = {};
               for (let entry in response) {
                 const userCoins = response[entry].coin_name;
                 const userCoinAmount = response[entry].coin_amount;
+                coinsObj[userCoins] = userCoinAmount;
+              }
+              for (let coin in coinsObj) {
+                if (coin && coinsObj[coin] > shares) {
+                  const newBalance = sell(eWallet, marketCap);
+                  updateBalance(newBalance, userID).then((data) => {
+                    addNewTransaction(
+                      coins,
+                      action,
+                      newBalance,
+                      today,
+                      float,
+                      userID
+                    ).then((data) => {
+                      return res.redirect(`/api/users/login/${userID}`);
+                    });
+                    return;
+                  });
+                } else {
+                  return res.json({ error: "Invalid Request" });
+                }
               }
             });
-            // const newBalance = sell(eWallet, marketCap);
-            // updateBalance(newBalance, userID).then((data) => {
-            //   addNewTransaction(
-            //     coins,
-            //     action,
-            //     newBalance,
-            //     today,
-            //     float,
-            //     userID
-            //   ).then((data) => {
-            //     return res.redirect(`/api/users/login/${userID}`);
-            //   });
-            //   return;
-            // });
           } else {
-            return res.json({ error: "Invalid Request!" });
+            return res.json({
+              error: "Insufficient funds: Cannot process transaction!",
+            });
           }
         });
       });
