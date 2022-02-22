@@ -4,6 +4,7 @@ import axios from "axios";
 import CoinWatchList from "./pages/CoinWatchList"
 import {WatchlistContextProvider} from './context/WatchlistContext'
 import ArticleList from "./pages/ArticleList";
+import ReactChatEngine from "./pages/ReactChatEngine";
 
 function App() {
   const [users, setUsers] = useState([]);
@@ -31,8 +32,8 @@ function App() {
   return ( <div className="App">   
  <WatchlistContextProvider >
     
-   
-  <CoinWatchList/>
+   <ReactChatEngine/>
+  {/* <CoinWatchList/> */}
 
   {/* <ArticleList/> */}
     {/* <ul>
