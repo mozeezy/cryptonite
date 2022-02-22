@@ -35,7 +35,7 @@ module.exports = (db) => {
 
   const addUser = (firstName, lastName, email, password) => {
     const query = {
-      text: `INSERT INTO users (first_name, last_name, email, password_digest) VALUES ($1, $2, $3, $4) RETURNING *;`,
+      text: `INSERT INTO users (first_name, last_name, email, password_digest, e_wallet) VALUES ($1, $2, $3, $4, 20000.00) RETURNING *;`,
       values: [firstName, lastName, email, password],
     };
 

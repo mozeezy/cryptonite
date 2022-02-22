@@ -8,6 +8,7 @@ import LandingPage from "./Pages/LandingPage";
 import Register from "./Components/Register";
 import { UserContext } from "./UserContext";
 import UseLocalStorage from "./UseLocalStorage"
+import Transactions from "./Components/Transactions";
 
 function App() {
 
@@ -32,14 +33,15 @@ function App() {
   return (
     <BrowserRouter>
       <div className={classes.App}>
-          <UserContext.Provider value={providerValue}>
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="register" element={<Register />} />
-          <Route path="home" element={<HomePage />} />
-          <Route path="home/coins/:id" element={<CoinPage />} />
-        </Routes>
-          </UserContext.Provider>
+        <UserContext.Provider value={providerValue}>
+          <Routes>
+            <Route path="/" element={<LandingPage />} />
+            <Route path="register" element={<Register />} />
+            <Route path="home" element={<HomePage />} />
+            <Route path="transactions" element={<Transactions/>} />
+            <Route path="home/coins/:id" element={<CoinPage />} />
+          </Routes>
+        </UserContext.Provider>
       </div>
     </BrowserRouter>
   );

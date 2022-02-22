@@ -102,7 +102,7 @@ const Register = () => {
       .then((res) => {
         console.log(res);
       });
-      navigate("/")
+    navigate("/");
   }
 
 

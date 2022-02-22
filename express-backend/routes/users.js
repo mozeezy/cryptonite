@@ -6,6 +6,7 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 app.use(cookieParser());
 app.use(cors());
+
 // this module receives the destructured dbHelpers object.
 module.exports = ({
   addUser,
@@ -25,6 +26,13 @@ module.exports = ({
     .catch((err) => res.json({ error: err.message }));
   });
   
+
+  router.post("/info", (req, res) => {
+    const { userID} = req.body;
+    db.query("SELECT e_wallet FROM users WHERE id = $1", [userID]).then((result) => {
+      res.send(result);
+    })
+  })
   
   router.post("/register", (req, res) => {
     const { firstName, lastName, email, password } = req.body;
@@ -67,7 +75,8 @@ module.exports = ({
       }
     );
   });
-  // adds balance amount
+
+  // //adds balance amount
   // router.get("/add-balance", (req, res) => {
   //   const userID = req.session.user_id;
   //   if (userID) {
@@ -79,67 +88,56 @@ module.exports = ({
   //   }
   // });
 
-  // router.post("/new-balance", (req, res) => {
-  //   const { dollarAmount } = req.body;
-  //   const userID = req.session.user_id;
-  //   let today = new Date();
-  //   const dd = String(today.getDate()).padStart(2, "0");
-  //   const mm = String(today.getMonth() + 1).padStart(2, "0");
-  //   const yyyy = today.getFullYear();
+  router.post("/new-balance", (req, res) => {
+    const { balance, user } = req.body;
+    let today = new Date();
+    const dd = String(today.getDate()).padStart(2, "0");
+    const mm = String(today.getMonth() + 1).padStart(2, "0");
+    const yyyy = today.getFullYear();
+    today = mm + "/" + dd + "/" + yyyy;
 
-  //   today = mm + "/" + dd + "/" + yyyy;
-
-  //   addTransaction(dollarAmount, today, userID)
-  //     .then((data) => {
-  //       console.log(data);
-  //       updateBalance(dollarAmount, userID).then((data) => {
-  //         return res.redirect(`/api/users/login/${userID}`);
-  //       });
-  //     })
-  //     .catch((err) => console.log(err));
-  // });
+    addTransaction(balance, today, user)
+    .then((data) => {
+        updateBalance(balance, user).then((result) => {
+          return res.send(data);
+        })
+      })
+      .catch((err) => console.log(err));
+  });
 
 
-  // router.get("/transactions", (req, res) => {
-  //   const userID = req.session.user_id;
+  router.post("/transactions", (req, res) => {
+    const { user } = req.body;
+    console.log(req)
+    console.log("trans", user)
 
-  //   if (userID) {
-  //     // Get the User.
-  //     getUserById(userID).then((data) => {
-  //       if (!req.session.user_id) {
-  //       }
-  //       const loggedUser = data;
-  //       if (loggedUser.is_admin === true) {
-  //         //
-  //         getAllTransactions()
-  //           .then((data) => {
-  //             const usersTransactions = data;
-  //             const templateVars = {
-  //               usersTransactions,
-  //             };
-  //             res.render("admin_transactions", templateVars);
-  //           })
-  //           .catch((err) => console.log(err));
-  //       } else {
-  //         // get the transaction for each user.
-  //         getTransactionById(userID)
-  //           .then((data) => {
-  //             console.log(data);
-  //             const usersTransactions = data;
-  //             const templateVars = {
-  //               usersTransactions,
-  //             };
-  //             res.render("user_transaction", templateVars);
-  //           })
-  //           .catch((err) => console.log(err));
-  //       }
-  //     });
-  //   } else {
-  //     return res
-  //       .status(403)
-  //       .json({ err: "You must be logged in to see this page." });
-  //   }
-  // });
+    if (user) {
+      // Get the User.
+      getUserById(user).then((data) => {
+
+        const loggedUser = data;
+        if (loggedUser.is_admin === true) {
+          getAllTransactions()
+            .then((result) => {
+              return res.send(result);
+            })
+            .catch((err) => console.log(err));
+        } else {
+          // get the transaction for each user.
+          getTransactionById(user)
+            .then((transactions) => {
+              console.log("transactions", transactions)
+              return res.send(transactions);
+            })
+            .catch((err) => console.log(err));
+        }
+      });
+    } else {
+      return res
+        .status(403)
+        .send({ message: "You must be logged in to see this page." });
+    }
+  });
 
   return router;
 };

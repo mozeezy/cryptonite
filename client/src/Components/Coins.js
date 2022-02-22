@@ -91,7 +91,7 @@ const Coins = () => {
                             fontWeight: "700",
                           }}
                           key={head}
-                          align={head === "Coin" ? "" : "right"}
+                          align={head === "Coin" ? "left" : "right"}
                         >
                           {head}
                         </TableCell>
