@@ -26,10 +26,20 @@ import { Pagination } from "@material-ui/lab";
 import { FiArrowUpRight, FiArrowDown } from "react-icons/fi";
 import { UserContext } from "../UserContext";
 import AttachMoneyRoundedIcon from "@material-ui/icons/AttachMoneyRounded";
+import ButtonGroup from "@material-ui/core/ButtonGroup";
+
 
 
 
 const useStyles = makeStyles((theme) => ({
+  root: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    "& > *": {
+      margin: theme.spacing(1),
+    },
+  },
   row: {
     backgroundColor: "#1617a",
     cursor: "pointer",
@@ -55,6 +65,7 @@ const Transactions = () => {
   const [balance, setBalance] = useState(1000.00);
   const { context } = useContext(UserContext);
   const user = context.id;
+  const [wallet, setWallet] = useState(balance);
   
 
   const darkTheme = createTheme({
@@ -67,27 +78,35 @@ const Transactions = () => {
   });
 
   const addBalance = (e) => {
-    setBalance(e.target.value)
-    axios.post(`http://localhost:3001/api/users/new-balance`, { balance, user });
-  }
+    setBalance(e.target.value);
+    axios.post(`http://localhost:3001/api/users/new-balance`, {
+      balance,
+      user,
+    })
+    .then(()=> {
+      e.preventDefault();
+    axios
+      .post(`http://localhost:3001/api/users/transactions`, { user })
+      .then((res) => {
+        setWallet(res.data[0].e_wallet)
+        console.log(res.data[0].e_wallet);
+        setTransactions(res.data);
+        console.log(transactions[0])
+        setLoading(false);
+      });
+    })
+  };
 
-  const seeTable = (e) => {
-    e.preventDefault();
-    console.log("setTable")
-    axios.post(`http://localhost:3001/api/users/transactions`, {user}).then((res) => {
-      setTransactions(res.data);
-      setLoading(false);
-    });
-  }
+
 
   return (
     <ThemeProvider theme={darkTheme}>
-      <Container>
+      <Container className={classes.root}>
         <FormControl className={classes.formControl}>
           <InputLabel>Add Money</InputLabel>
           <Select
             value={balance}
-            onClick={addBalance}
+            onChange={addBalance}
             variant="outlined"
             styles={{
               width: 100,
@@ -100,7 +119,6 @@ const Transactions = () => {
             <MenuItem value={10000.00}>10,000</MenuItem>
           </Select>
         </FormControl>
-        <Button onClick={seeTable}>transactions</Button>
       </Container>
       <Container style={{ textAlign: "center" }}>
         <Typography variant="h4" style={{ margin: 18 }}>
@@ -137,95 +155,90 @@ const Transactions = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {transactions
-                  .map((row) => {
-                      return (
-                        <TableRow
-                          className={classes.row}
-                          hover
-                          key={row.e_wallet}
+                  {transactions.map((row) => {
+                    return (
+                      <TableRow className={classes.row} hover key={wallet}>
+                        <TableCell
+                          align="left"
+                          component="th"
+                          scope="row"
+                          style={{
+                            display: "flex",
+                            gap: 15,
+                          }}
                         >
-                          <TableCell
-                            align="left"
-                            component="th"
-                            scope="row"
+                          <div
                             style={{
                               display: "flex",
-                              gap: 15,
+                              flexDirection: "column",
                             }}
                           >
-                            <div
+                            <span
                               style={{
-                                display: "flex",
-                                flexDirection: "column",
+                                textTransform: "uppercase",
+                                fontSize: 22,
                               }}
                             >
-                              <span
-                                style={{
-                                  textTransform: "uppercase",
-                                  fontSize: 22,
-                                }}
-                              >
-                                {symbol} {row.e_wallet}
-                              </span>
-                            </div>
-                          </TableCell>
-                          <TableCell
-                            align="right"
-                            style={{ textTransform: "uppercase", fontSize: 22 }}
-                          >
-                            {row.coin_name}
-                          </TableCell>
-                          <TableCell
-                            align="right"
-                            style={{
-                              textTransform: "uppercase",
-                              fontSize: 22,
-                              fontWeight: 500,
-                            }}
-                          >
-                            {row.coin_amount}
-                          </TableCell>
-                          <TableCell align="right">
-                            {row.buy_or_sell === "buy" ? (
-                              <span
-                                style={{
-                                  color: "red",
-                                  textTransform: "uppercase",
-                                  fontSize: 22,
-                                  fontWeight: 500,
-                                }}
-                              >
-                                {row.buy_or_sell}
-                              </span>
-                            ) : (
-                              <span
-                                style={{
-                                  color: "green",
-                                  textTransform: "uppercase",
-                                  fontSize: 22,
-                                  fontWeight: 500,
-                                }}
-                              >
-                                {row.buy_or_sell}
-                              </span>
-                            )}
-                          </TableCell>
-                          <TableCell
-                            align="right"
-                            style={{ textTransform: "uppercase", fontSize: 22 }}
-                          >
-                            {symbol} {row.amount}
-                          </TableCell>
-                          <TableCell
-                            align="right"
-                            style={{ textTransform: "uppercase", fontSize: 22 }}
-                          >
-                            {row.created_at}
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })}
+                              {symbol} {row.e_wallet}
+                            </span>
+                          </div>
+                        </TableCell>
+                        <TableCell
+                          align="right"
+                          style={{ textTransform: "uppercase", fontSize: 22 }}
+                        >
+                          {row.coin_name}
+                        </TableCell>
+                        <TableCell
+                          align="right"
+                          style={{
+                            textTransform: "uppercase",
+                            fontSize: 22,
+                            fontWeight: 500,
+                          }}
+                        >
+                          {row.coin_amount}
+                        </TableCell>
+                        <TableCell align="right">
+                          {row.buy_or_sell === "buy" ? (
+                            <span
+                              style={{
+                                color: "red",
+                                textTransform: "uppercase",
+                                fontSize: 22,
+                                fontWeight: 500,
+                              }}
+                            >
+                              {row.buy_or_sell}
+                            </span>
+                          ) : (
+                            <span
+                              style={{
+                                color: "green",
+                                textTransform: "uppercase",
+                                fontSize: 22,
+                                fontWeight: 500,
+                              }}
+                            >
+                              {row.buy_or_sell}
+                            </span>
+                          )}
+                        </TableCell>
+                        <TableCell
+                          align="right"
+                          style={{ textTransform: "uppercase", fontSize: 22 }}
+                        >
+                          {symbol} {row.amount}
+                        </TableCell>
+                        <TableCell
+                          align="right"
+                          style={{ textTransform: "uppercase", fontSize: 22 }}
+                        >
+                          {row.created_at}
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
                 </TableBody>
               </Table>
             </>

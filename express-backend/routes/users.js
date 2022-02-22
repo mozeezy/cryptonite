@@ -28,15 +28,14 @@ module.exports = ({
   
 
   router.post("/info", (req, res) => {
-    const { userID} = req.body;
-    db.query("SELECT e_wallet FROM users WHERE id = $1", [userID]).then((result) => {
-      res.send(result);
+    const { user } = req.body;
+    db.query("SELECT e_wallet FROM users WHERE id = $1", [user]).then((result) => {
+      res.send(result.rows);
     })
   })
   
   router.post("/register", (req, res) => {
     const { firstName, lastName, email, password } = req.body;
-    console.log("LOGGG", req.body);
 
     const hashMyPassword = (password) => {
       return bcrypt.hash(password, 10);
@@ -90,11 +89,20 @@ module.exports = ({
 
   router.post("/new-balance", (req, res) => {
     const { balance, user } = req.body;
+    console.log(balance)
     let today = new Date();
     const dd = String(today.getDate()).padStart(2, "0");
     const mm = String(today.getMonth() + 1).padStart(2, "0");
     const yyyy = today.getFullYear();
     today = mm + "/" + dd + "/" + yyyy;
+    if(balance === undefined) {
+      res.status(403).send("no balance chosen");
+      return;
+    }
+    if (!balance) {
+      res.status(403).send("no balance chosen");
+      return;
+    }
 
     addTransaction(balance, today, user)
     .then((data) => {
@@ -108,8 +116,6 @@ module.exports = ({
 
   router.post("/transactions", (req, res) => {
     const { user } = req.body;
-    console.log(req)
-    console.log("trans", user)
 
     if (user) {
       // Get the User.
@@ -126,7 +132,6 @@ module.exports = ({
           // get the transaction for each user.
           getTransactionById(user)
             .then((transactions) => {
-              console.log("transactions", transactions)
               return res.send(transactions);
             })
             .catch((err) => console.log(err));
