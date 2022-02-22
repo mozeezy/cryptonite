@@ -13,28 +13,19 @@
       <label>Select coin:</label>
       <select name="coins">
         <% for(let coin of coinsList) { %>
-        <option value="<%= coin.id %>"><%= coin.name %></option>
+        <option value="<%= coin.id %>">
+          <%= `${coin.name} - ${coin.symbol}` %> <%= coin.current_price %>
+        </option>
 
         <% } %></select
       ><br /><br />
-      <label>Price per share:</label>
-      <select name="pricePerShare">
-        <% for(let coin of coinsList) { %>
-        <option value="<%= coin.current_price %>">
-          <%= coin.current_price %>
-        </option>
-
-        <% } %>
-      </select>
-      <br />
-      <br />
       <label>Select action:</label>
       <select name="action">
         <option value="buy">Buy</option>
         <option value="sell">Sell</option></select
       ><br /><br />
       <label>How many shares would you like to buy/sell?</label>
-      <input name="shares" type="number" data-type="currency" required />
+      <input name="shares" type="number" placeholder="0.00" required />
       <br /><br />
 
       <button type="submit">Submit Transaction</button>

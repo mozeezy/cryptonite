@@ -9,6 +9,17 @@ module.exports = (db) => {
       .catch((err) => err);
   };
 
+  const getUserCoins = (id) => {
+    const query = {
+      text: `SELECT coin_name, coin_amount FROM users JOIN transactions on users.id = user_id WHERE user_id = $1`,
+      values: [id],
+    };
+    return db
+      .query(query)
+      .then((result) => result.rows)
+      .catch((err) => err);
+  };
+
   const getUserById = (id) => {
     const query = {
       text: `SELECT * FROM users WHERE id = $1`,
@@ -20,14 +31,21 @@ module.exports = (db) => {
       .catch((err) => err);
   };
 
-  const addNewTransaction = (coinName, action, dollarAmount, date) => {
+  const addNewTransaction = (
+    coinName,
+    action,
+    dollarAmount,
+    date,
+    coinAmount,
+    id
+  ) => {
     const query = {
-      text: `INSERT INTO transactions (coin_name, buy_or_sell, amount, created_at) VALUES ($1, $2, $3, $4) RETURNING *`,
-      values: [coinName, action, dollarAmount, date],
+      text: `INSERT INTO transactions (coin_name, buy_or_sell, amount, created_at, coin_amount, user_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
+      values: [coinName, action, dollarAmount, date, coinAmount, id],
     };
     return db
       .query(query)
-      .then((result) => result.rows[0])
+      .then((result) => result.rows)
       .catch((err) => err);
   };
 
@@ -43,16 +61,14 @@ module.exports = (db) => {
   };
 
   const updateBalance = (amount, userId) => {
-    return getUserById(userId).then((data) => {
-      const query = {
-        text: `UPDATE users SET e_wallet = $1 WHERE id = $2;`,
-        values: [Number(data.e_wallet) + Number(amount), userId],
-      };
-      return db
-        .query(query)
-        .then((result) => result.rows)
-        .catch((err) => err);
-    });
+    const query = {
+      text: `UPDATE users SET e_wallet = $1 WHERE id = $2;`,
+      values: [amount, userId],
+    };
+    return db
+      .query(query)
+      .then((result) => result.rows)
+      .catch((err) => err);
   };
 
   return {
@@ -61,5 +77,6 @@ module.exports = (db) => {
     getUserBalance,
     getUserById,
     updateBalance,
+    getUserCoins,
   };
 };

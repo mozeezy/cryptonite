@@ -47,7 +47,7 @@ module.exports = (db) => {
 
   const getAllTransactions = () => {
     const query = {
-      text: `SELECT * FROM users JOIN transactions on users.id = user_id ORDER BY created_at DESC;`,
+      text: `SELECT * FROM users JOIN transactions on users.id = user_id ORDER BY transactions.id DESC;`,
     };
     return db
       .query(query)
@@ -57,7 +57,7 @@ module.exports = (db) => {
 
   const getTransactionById = (id) => {
     const query = {
-      text: `SELECT * FROM users JOIN transactions on users.id = user_id WHERE user_id=$1 ORDER BY created_at DESC;`,
+      text: `SELECT * FROM users JOIN transactions on users.id = user_id WHERE user_id=$1 ORDER BY transactions.id DESC;`,
       values: [id],
     };
     return db
