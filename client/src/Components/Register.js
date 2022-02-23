@@ -122,7 +122,7 @@ const Register = () => {
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
                 <TextField
-                  style={{ backgroundColor: "black", borderColor: "red"}}
+                  style={{ backgroundColor: "black", borderColor: "red", fontColor: "black"}}
                   autoComplete="fname"
                   name="firstName"
                   variant="outlined"

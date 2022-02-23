@@ -7,6 +7,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Container } from "@material-ui/core";
 import { useNavigate } from "react-router-dom";
 import SignIn from "../Components/SignIn";
+import { createTheme, ThemeProvider } from "@material-ui/core";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -14,7 +15,7 @@ const useStyles = makeStyles((theme) => ({
     height: "100vh",
   },
   image: {
-    backgroundImage: "url(../docs/crypto.jpg)",
+    backgroundImage: "../docs/crypto.jpg",
     backgroundColor:
     theme.palette.type === "light"
         ? theme.palette.grey[50]
@@ -56,6 +57,15 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+  const darkTheme = createTheme({
+    palette: {
+      primary: {
+        main: "#fff",
+      },
+      type: "dark",
+    },
+  });
+
 
 
 
@@ -69,9 +79,11 @@ const LandingPage = () => {
   }
   
   return (
-    <Grid container component="main" className={classes.root}>
+    
+    <Grid container component="main">
       <CssBaseline />
-      <Grid item xs={false} sm={4} md={7} className={classes.image}>
+      <ThemeProvider theme={darkTheme}>
+      <Grid item xs={false} sm={4} md={7}>
         <Container className={classes.HeroContent}>
           <div className={classes.HeroDesc}>
             <Typography
@@ -87,7 +99,7 @@ const LandingPage = () => {
             <Typography
               variant="subtitle1"
               style={{
-                color: "black",
+                color: "red",
                 textTransform: "capitalize",
               }}
             >
@@ -118,6 +130,7 @@ const LandingPage = () => {
           </div>
         </Container>
       </Grid>
+    </ThemeProvider>
      <SignIn />
     </Grid>
   );

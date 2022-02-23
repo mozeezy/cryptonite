@@ -54,6 +54,12 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(1),
     minWidth: 120,
   },
+  buttons: {
+    "& > *": {
+      margin: theme.spacing(1),
+      width: "25ch",
+    },
+  },
 }));
 
 const Transactions = () => {
@@ -63,12 +69,15 @@ const Transactions = () => {
   const classes = useStyles();
   const [loading, setLoading] = useState(true);
   const [transactions, setTransactions] = useState([]);
-  const [balance, setBalance] = useState(1000.00);
+  const [balance, setBalance] = useState();
   const { context } = useContext(UserContext);
   const user = context.id;
   const [wallet, setWallet] = useState(balance);
+  const [shares, setShares] = useState();
+  const [coin, setCoin] = useState();
+  const [price, setPrice] = useState();
+  const [action, setAction] = useState("buy");
   
-
   const darkTheme = createTheme({
     palette: {
       primary: {
@@ -85,7 +94,7 @@ const Transactions = () => {
       user,
     })
     .then(()=> {
-      e.preventDefault();
+    e.preventDefault();
     axios
       .post(`http://localhost:3001/api/users/transactions`, { user })
       .then((res) => {
@@ -99,7 +108,23 @@ const Transactions = () => {
   };
 
 
-  
+  const buy =(e) => {
+    setLoading(true)
+    axios.post(`http://localhost:3001/api/transactions`, { coin, price, shares, action, user }).then(()=> {
+      e.preventDefault();
+      axios
+        .post(`http://localhost:3001/api/users/transactions`, { user })
+        .then((res) => {
+          setWallet(res.data[0].e_wallet);
+          console.log(res.data[0].e_wallet);
+          setTransactions(res.data);
+          console.log(transactions[0]);
+          setLoading(false);
+        });
+    })
+
+  }
+
   return (
     <ThemeProvider theme={darkTheme}>
       <Header/>
@@ -120,7 +145,13 @@ const Transactions = () => {
             <MenuItem value={5000.0}>5,000</MenuItem>
             <MenuItem value={10000.0}>10,000</MenuItem>
           </Select>
-        </FormControl>
+        </FormControl>   
+           <form className={classes.buttons} noValidate autoComplete="off">
+        <TextField id="outlined-basic" label="Coin" variant="outlined" value={coin} onChange={(e)=> {setCoin(e.target.value)}} />
+        <TextField id="outlined-basic" label="Price" variant="outlined" value={price} onChange={(e)=> {setPrice(e.target.value)}} />
+        <TextField id="outlined-basic" label="Shares" variant="outlined" value={shares} onChange={(e)=>{setShares(e.target.value)}}/>
+        <Button onClick={buy}>Buy</Button>
+         </form>
       </Container>
       <Container style={{ textAlign: "center" }}>
         <Typography variant="h4" style={{ margin: 18 }}>

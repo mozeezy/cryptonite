@@ -95,7 +95,7 @@ const SignIn = (props) => {
         password,
       }).then((result) => {
         if(result.data.first_name) {
-          setUser(result.data.first_name);
+          setUser("Sucessfully Signed In!");
           setContext(result.data);
         } else { 
           setUser(result.data.message);
