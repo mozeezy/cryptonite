@@ -57,12 +57,11 @@ module.exports = ({
 
     addTransaction(dollarAmount, today, userID)
       .then((data) => {
-        console.log(data);
         updateBalance(dollarAmount, userID).then((data) => {
           return res.redirect(`/api/users/login/${userID}`);
         });
       })
-      .catch((err) => console.log(err));
+      .catch((err) => res.json({ error: err.message }));
   });
 
   //Logs in user.
@@ -108,7 +107,7 @@ module.exports = ({
               };
               res.render("user_transaction", templateVars);
             })
-            .catch((err) => console.log(err));
+            .catch((err) => res.json({ error: err.message }));
         }
       });
     } else {
@@ -138,10 +137,11 @@ module.exports = ({
       // Add the user to the database.
       addUser(fName, lName, email, hashMyPassword)
         .then((data) => {
-          console.log(data);
           return res.redirect(`/api/users/login/${data.id}`);
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          res.json({ error: err.message });
+        });
     });
   });
 
