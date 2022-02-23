@@ -25,7 +25,14 @@
         <option value="sell">Sell</option></select
       ><br /><br />
       <label>How many shares would you like to buy/sell?</label>
-      <input name="shares" type="number" placeholder="0.00" required />
+      <input
+        name="shares"
+        type="number"
+        placeholder="0.00"
+        step="any"
+        min="0"
+        required
+      />
       <br /><br />
 
       <button type="submit">Submit Transaction</button>

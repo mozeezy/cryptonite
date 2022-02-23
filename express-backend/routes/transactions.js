@@ -11,16 +11,16 @@ module.exports = ({
   updateBalance,
   getUserCoins,
 }) => {
-  // const marketCap = (pricePerShare, numOfShares) => {
-  //   return pricePerShare * numOfShares;
-  // };
-
   const buy = (balance, amount) => {
     return balance - amount;
   };
 
   const sell = (balance, amount) => {
     return balance + amount;
+  };
+
+  const subtract = (amountInDb, amountEntered) => {
+    return amountInDb - amountEntered;
   };
 
   // Get the transactions JSON data.
@@ -100,69 +100,72 @@ module.exports = ({
 
             // if the user is selling
           } else if (action === "sell") {
-            getUserCoins(userID).then((response) => {
-              let coinsObj = {};
-              for (let entry in response) {
-                const userCoins = response[entry].coin_name;
-                const userCoinAmount = response[entry].coin_amount;
-                coinsObj[userCoins] = userCoinAmount;
-              }
-              for (let coin in coinsObj) {
-                if (coin && coinsObj[coin] > shares) {
+            getUserCoins(userID).then((response2) => {
+              console.log("RESPONSE", response2);
+              for (let element of response2) {
+                const coinName = element.coin_name;
+                const coinAmount = element.coin_amount;
+                console.log("COINNAME", coinName);
+                console.log("COINAMOUNT", coinAmount);
+
+                if (coinName && coinAmount >= shares) {
+                  console.log("IM HERE!!!");
+                  const coinDifference = subtract(coinAmount, shares);
                   const newBalance = sell(eWallet, marketCap);
-                  updateBalance(newBalance, userID).then((data) => {
+                  updateBalance(newBalance, userID).then((whatever) => {
                     addNewTransaction(
                       coins,
                       action,
                       newBalance,
                       today,
-                      float,
+                      coinDifference,
                       userID
-                    ).then((data) => {
+                    ).then((okay) => {
                       return res.redirect(`/api/users/login/${userID}`);
                     });
-                    return;
                   });
-                } else {
-                  return res.json({ error: "Invalid Request" });
                 }
               }
             });
+
+            // getUserCoins(userID).then((response) => {
+            //   let coinsObj = {};
+            //   // creating an object with user's coin name as the key and the amount as the value.
+            //   for (let entry in response) {
+            //     const userCoins = response[entry].coin_name;
+            //     const userCoinAmount = response[entry].coin_amount;
+            //     coinsObj[userCoins] = userCoinAmount;
+            //   }
+            //   console.log("IAM coinsOBJ", coinsObj);
+
+            //   for (let coin in coinsObj) {
+            //     console.log("IAM COIN", coinsObj[coin]);
+            //     if (coin && coinsObj[coin] && eWallet > marketCap) {
+            //       const newBalance = sell(eWallet, marketCap);
+            //       updateBalance(newBalance, userID).then((data) => {
+            //         addNewTransaction(
+            //           coins,
+            //           action,
+            //           newBalance,
+            //           today,
+            //           float,
+            //           userID
+            //         ).then((data) => {
+            //           return res.redirect(`/api/users/login/${userID}`);
+            //         });
+            //         return;
+            //       });
+            //     } else {
+            //       return res.json({ error: "Invalid Request" });
+            //     }
+            //   }
+            // });
           } else {
-            return res.json({
-              error: "Insufficient funds: Cannot process transaction!",
-            });
+            return res.json({ error: "Invalid Request" });
           }
         });
       });
-
-    // getUserBalance(userID).then((data) => {
-    //   const eWallet = data.e_wallet;
-    //   if (action === "buy" && eWallet > price) {
-    //     const newBalance = buy(eWallet, price);
-    //     updateBalance(newBalance, userID).then((data) => {
-    //       addNewTransaction(coins, action, newBalance, today, userID).then(
-    //         (data) => {
-    //           return res.redirect(`/api/users/login/${userID}`);
-    //         }
-    //       );
-    //       return;
-    //     });
-    //   } else if (action === "sell") {
-
-    //     const newBalance = sell(eWallet, price);
-    //     updateBalance(newBalance, userID).then((data) => {
-    //       addNewTransaction(coins, action, newBalance, today, userID).then(
-    //         (data) => {
-    //           return res.redirect(`/api/users/login/${userID}`);
-    //         }
-    //       );
-    //       return;
-    //     });
-    //   } else {
-    //     return res.json({ error: "Invalid request" });
-    //   }
-    // });
   });
   return router;
 };
+

@@ -71,6 +71,39 @@ module.exports = (db) => {
       .catch((err) => err);
   };
 
+  const checkBuy = (userId, coinName) => {
+    const query = {
+      text: `SELECT sum(coin_amount) FROM transactions WHERE user_id = $1 AND coin_name = $2 AND buy_or_sell = 'buy';`,
+      values: [userId, coinName],
+    };
+    return db
+      .query(query)
+      .then((result) => result.rows)
+      .catch((err) => err);
+  };
+
+  const checkBuy = (userId, coinName) => {
+    const query = {
+      text: `SELECT sum(coin_amount) FROM transactions WHERE user_id = $1 AND coin_name = $2 AND buy_or_sell = 'buy' RETURNING *;`,
+      values: [userId, coinName],
+    };
+    return db
+      .query(query)
+      .then((result) => result.rows)
+      .catch((err) => err);
+  };
+
+  const checkSell = (userId, coinName) => {
+    const query = {
+      text: `SELECT sum(coin_amount) FROM transactions WHERE user_id = $1 AND coin_name = $2 AND buy_or_sell = 'sell' RETURNING *;`,
+      values: [userId, coinName],
+    };
+    return db
+      .query(query)
+      .then((result) => result.rows)
+      .catch((err) => err);
+  };
+
   return {
     getTransactions,
     addNewTransaction,
@@ -78,5 +111,7 @@ module.exports = (db) => {
     getUserById,
     updateBalance,
     getUserCoins,
+    checkBuy,
+    checkSell,
   };
 };
