@@ -121,7 +121,6 @@ const Transactions = () => {
             <MenuItem value={10000.0}>10,000</MenuItem>
           </Select>
         </FormControl>
-        <Order/>
       </Container>
       <Container style={{ textAlign: "center" }}>
         <Typography variant="h4" style={{ margin: 18 }}>

@@ -27,6 +27,9 @@ const handleClose = (event) => {
   setAnchorEl(null);
 };
 
+
+
+
 const buy = ()=> {
   axios.get(CoinList(currency)).then((res) => {
     setCoins(res.data);
