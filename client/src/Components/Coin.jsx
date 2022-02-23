@@ -8,11 +8,12 @@ import ButtonBase from "@material-ui/core/ButtonBase";
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
+    width: "100%"
   },
   paper: {
     padding: theme.spacing(2),
     margin: "auto",
-    maxWidth: 500,
+    width: "100%",
   },
   image: {
     width: 128,

@@ -70,7 +70,7 @@ function Copyright() {
     <Typography variant="body2" style={{ color: "red" }} align="center">
       {"Copyright © "}
       <Link color="inherit" href="https://mui.com/">
-        Your Website
+        CrytoNite
       </Link>{" "}
       {new Date().getFullYear()}
       {"."}
@@ -173,7 +173,7 @@ const SignIn = (props) => {
               </Link>
             </Grid>
             <Grid item>
-              <Link onClick={() => navigate("/")} variant="body2" style={{ color: "red" }}>
+              <Link href="/register" variant="body2" style={{ color: "red" }}>
                 {"Don't have an account? Sign Up"}
               </Link>
             </Grid>

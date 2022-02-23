@@ -32,9 +32,16 @@ const DisplayCoinWatchlist = () => {
       return <div>Loading...</div>;
     }
     return (
-      <ul>
+      <ul style={{width: "max-content"}}>
         {coins.map((coin) => {
-          return <Coin key={coin.id} coin={coin} deleteCoin={deleteCoin} />;
+          return (
+            <Coin
+              style={{ width: "max-content" }}
+              key={coin.id}
+              coin={coin}
+              deleteCoin={deleteCoin}
+            />
+          );
         })}
       </ul>
     );

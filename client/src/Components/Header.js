@@ -47,6 +47,18 @@ const Header = () => {
                   <span style={{ color: "red" }}> {context.last_name}</span>
                 </Typography>
                 <Button
+                  onClick={() => navigate("/watch")}
+                  style={{ color: "red" }}
+                >
+                  WatchList
+                </Button>
+                <Button
+                  onClick={() => navigate("/transactions")}
+                  style={{ color: "red" }}
+                >
+                  Transactions
+                </Button>
+                <Button
                   onClick={() => {
                     setContext(null);
                   }}

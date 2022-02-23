@@ -114,7 +114,6 @@ const LandingPage = () => {
                 textTransform: "capitalize",
               }}
             >
-              <Button style={{ color: "red" }}>News</Button>
             </Typography>
           </div>
         </Container>

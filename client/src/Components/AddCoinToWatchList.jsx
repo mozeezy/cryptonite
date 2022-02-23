@@ -1,5 +1,6 @@
 import React, { useState, useContext } from "react";
 import { WatchlistContext } from "../WatchlistContext";
+import { Button } from "@material-ui/core";
 
 const AddCoin = () => {
   const [isActive, setIsActive] = useState(false);
@@ -24,23 +25,16 @@ const AddCoin = () => {
 
   return (
     <div className="dropdown">
-      <button
-        onClick={() => setIsActive(!isActive)}
-        className="btn btn-primary dropdown-toggle"
-        type="button"
-      >
-        Add Coin
-      </button>
       <div className={isActive ? "dropdown-menu show" : "dropdown-menu"}>
         {availableCoins.map((el) => {
           return (
-            <a
+            <Button style={{color: "red"}}
               onClick={() => handleClick(el)}
               href="#"
               className="dropdown-item"
             >
               {el}
-            </a>
+            </Button>
           );
         })}
       </div>
