@@ -15,7 +15,6 @@
 
       <table>
         <tr style="background-color: orange">
-          <th>Transaction ID</th>
           <th>E-Wallet Balance(in Dollars)</th>
           <th>Coins purchased</th>
           <th>Amount of coins purchased/sold</th>
@@ -26,7 +25,6 @@
 
         <% for (let transaction of usersTransactions) { %>
         <tr>
-          <td><%= transaction.id %></td>
           <td>$<%= transaction.e_wallet %></td>
           <td><%= transaction.coin_name %></td>
           <td><%= transaction.coin_amount %></td>

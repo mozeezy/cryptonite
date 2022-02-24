@@ -35,7 +35,7 @@ module.exports = (db) => {
 
   const addUser = (firstName, lastName, email, password) => {
     const query = {
-      text: `INSERT INTO users (first_name, last_name, email, password_digest) VALUES ($1, $2, $3, $4) RETURNING *;`,
+      text: `INSERT INTO users (first_name, last_name, email, password_digest, e_wallet) VALUES ($1, $2, $3, $4, 20000.00) RETURNING *;`,
       values: [firstName, lastName, email, password],
     };
 
@@ -47,7 +47,7 @@ module.exports = (db) => {
 
   const getAllTransactions = () => {
     const query = {
-      text: `SELECT * FROM users JOIN transactions on users.id = user_id ORDER BY transactions.id DESC;`,
+      text: `SELECT * FROM users JOIN transactions on users.id = user_id ORDER BY created_at DESC;`,
     };
     return db
       .query(query)
@@ -57,7 +57,7 @@ module.exports = (db) => {
 
   const getTransactionById = (id) => {
     const query = {
-      text: `SELECT * FROM users JOIN transactions on users.id = user_id WHERE user_id=$1 ORDER BY transactions.id DESC;`,
+      text: `SELECT * FROM users JOIN transactions on users.id = user_id WHERE user_id=$1 ORDER BY created_at DESC;`,
       values: [id],
     };
     return db

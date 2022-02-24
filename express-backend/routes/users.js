@@ -1,7 +1,11 @@
 const express = require("express");
-const app = require("../app");
+const app = express();
 const router = express.Router();
 const bcrypt = require("bcryptjs");
+const cookieParser = require("cookie-parser");
+const cors = require("cors");
+app.use(cookieParser());
+app.use(cors());
 
 // this module receives the destructured dbHelpers object.
 module.exports = ({
@@ -13,136 +17,131 @@ module.exports = ({
   getTransactionById,
   updateBalance,
   addTransaction,
-}) => {
-  // user logout
-  router.get("/logout", (req, res) => {
-    req.session = null;
-    res.redirect("/api/users/register");
-  });
-
-  // user register page
-  router.get("/register", (req, res) => {
-    req.session = null;
-    res.render("user_signup");
-  });
-
+}, db) => {
+  
   // get the users JSON data.
   router.get("/", (req, res) => {
     getUsers()
-      .then((users) => res.json(users))
-      .catch((err) => res.json({ error: err.message }));
+    .then((users) => res.json(users))
+    .catch((err) => res.json({ error: err.message }));
+  });
+  
+
+  router.post("/info", (req, res) => {
+    const { user } = req.body;
+    db.query("SELECT e_wallet FROM users WHERE id = $1", [user]).then((result) => {
+      res.send(result.rows);
+    })
+  })
+  
+  router.post("/register", (req, res) => {
+    const { firstName, lastName, email, password } = req.body;
+
+    const hashMyPassword = (password) => {
+      return bcrypt.hash(password, 10);
+    };
+
+    // Add the user to the database.
+    hashMyPassword(password).then((result) => {
+      addUser(firstName, lastName, email, result);
+    });
+  });
+  
+  router.post("/login", (req, res) => {
+    const { email, password } = req.body;
+
+    db.query("SELECT * FROM users WHERE email = $1", [email]).then(
+      (result) => {
+        if (result.rows.length > 0) {
+          bcrypt.compare(
+            password,
+            result.rows[0].password_digest,
+            (err, response) => {
+              if(err) {console.log(err)}
+              if (response) {
+                console.log(result.rows[0]);
+                res.send(result.rows[0]);
+              } else {
+                res.send({
+                  message: "Username/Password Combination is Incorrect!",
+                });
+              }
+            }
+          );
+        } else {
+          res.send({ message: "User Does Not Exist" });
+        }
+      }
+    );
   });
 
-  // adds balance amount
-  router.get("/add-balance", (req, res) => {
-    const userID = req.session.user_id;
-    if (userID) {
-      res.render("add_balance");
-    } else {
-      res
-        .status(403)
-        .json({ error: "You must login to access this functionality!" });
-    }
-  });
+  // //adds balance amount
+  // router.get("/add-balance", (req, res) => {
+  //   const userID = req.session.user_id;
+  //   if (userID) {
+  //     res.render("add_balance");
+  //   } else {
+  //     res
+  //       .status(403)
+  //       .json({ error: "You must login to access this functionality!" });
+  //   }
+  // });
 
   router.post("/new-balance", (req, res) => {
-    const { dollarAmount } = req.body;
-    const userID = req.session.user_id;
+    const { balance, user } = req.body;
+    console.log(balance)
     let today = new Date();
     const dd = String(today.getDate()).padStart(2, "0");
     const mm = String(today.getMonth() + 1).padStart(2, "0");
     const yyyy = today.getFullYear();
-
     today = mm + "/" + dd + "/" + yyyy;
-
-    addTransaction(dollarAmount, today, userID)
-      .then((data) => {
-        updateBalance(dollarAmount, userID).then((data) => {
-          return res.redirect(`/api/users/login/${userID}`);
-        });
-      })
-      .catch((err) => res.json({ error: err.message }));
-  });
-
-  //Logs in user.
-  router.get("/login/:id", (req, res) => {
-    const userID = req.params.id;
-    // Confirm that the id parameter entered is a number.
-    if (isNaN(userID)) {
-      res.status(403).json({ error: "User doesn't exist" });
-    } else {
-      req.session.user_id = userID;
-      res.redirect("/api/users/transactions");
+    if(balance === undefined) {
+      res.status(403).send("no balance chosen");
+      return;
     }
+    if (!balance) {
+      res.status(403).send("no balance chosen");
+      return;
+    }
+
+    addTransaction(balance, today, user)
+    .then((data) => {
+        updateBalance(balance, user).then((result) => {
+          return res.send(data);
+        })
+      })
+      .catch((err) => console.log(err));
   });
 
-  router.get("/transactions", (req, res) => {
-    const userID = req.session.user_id;
 
-    if (userID) {
+  router.post("/transactions", (req, res) => {
+    const { user } = req.body;
+
+    if (user) {
       // Get the User.
-      getUserById(userID).then((data) => {
-        if (!req.session.user_id) {
-        }
+      getUserById(user).then((data) => {
+
         const loggedUser = data;
         if (loggedUser.is_admin === true) {
-          //
           getAllTransactions()
-            .then((data) => {
-              const usersTransactions = data;
-              const templateVars = {
-                usersTransactions,
-              };
-              res.render("admin_transactions", templateVars);
+            .then((result) => {
+              return res.send(result);
             })
             .catch((err) => console.log(err));
         } else {
           // get the transaction for each user.
-          getTransactionById(userID)
-            .then((data) => {
-              console.log(data);
-              const usersTransactions = data;
-              const templateVars = {
-                usersTransactions,
-              };
-              res.render("user_transaction", templateVars);
+          getTransactionById(user)
+            .then((transactions) => {
+              return res.send(transactions);
             })
-            .catch((err) => res.json({ error: err.message }));
+            .catch((err) => console.log(err));
         }
       });
     } else {
       return res
         .status(403)
-        .json({ err: "You must be logged in to see this page." });
+        .send({ message: "You must be logged in to see this page." });
     }
-  });
-
-  // redirect new user to their transactions.
-  router.post("/register", (req, res) => {
-    const { fName, lName, email, password } = req.body;
-
-    // if the inputs are empty, do not prompt the user to login.
-    if (!fName || !lName || !email || !password) {
-      return res.status(400).send({ message: "Credentials incomplete!" });
-    }
-    // if the user signs in with an existing email, send a message that user exists
-    getUserByEmail(email).then(async (data) => {
-      if (data) {
-        return res.status(400).send({ error: "User already exists!" });
-      }
-
-      // Hash the incoming password from the field before storing it in the database.
-      const hashMyPassword = await bcrypt.hash(password, 10);
-
-      // Add the user to the database.
-      addUser(fName, lName, email, hashMyPassword)
-        .then((data) => {
-          return res.redirect(`/api/users/login/${data.id}`);
-        })
-        .catch((err) => {
-          res.json({ error: err.message });
-        });
-    });
   });
 
   return router;

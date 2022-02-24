@@ -2,7 +2,6 @@ const express = require("express");
 const app = require("../app");
 const router = express.Router();
 const axios = require("axios");
-const { json } = require("express");
 
 module.exports = ({
   getTransactions,
@@ -10,8 +9,16 @@ module.exports = ({
   getUserBalance,
   updateBalance,
 }) => {
+  // const marketCap = (pricePerShare, numOfShares) => {
+  //   return pricePerShare * numOfShares;
+  // };
+
   const buy = (balance, amount) => {
     return balance - amount;
+  };
+
+  const sell = (balance, amount) => {
+    return balance + amount;
   };
 
   // Get the transactions JSON data.
@@ -46,63 +53,53 @@ module.exports = ({
   });
 
   router.post("/", (req, res) => {
-    // the inputs from the ejs form
-    const { coins, action, shares } = req.body;
-    const float = parseFloat(shares).toFixed(2);
-    const userID = req.session.user_id;
-
-    // function to create today's date.
+    const { coin, price, shares, action, user } = req.body;
     let today = new Date();
     const dd = String(today.getDate()).padStart(2, "0");
     const mm = String(today.getMonth() + 1).padStart(2, "0");
     const yyyy = today.getFullYear();
     today = mm + "/" + dd + "/" + yyyy;
 
-    // api request to get the price per share for each coin.
-    axios
-      .get(
-        `https://api.coingecko.com/api/v3/coins/${coins}
-    `
-      )
-      .then((response) => {
-        const pricePerShare = response.data.market_data.current_price.usd;
-        const marketCap = pricePerShare * shares;
-        getUserBalance(userID).then((data) => {
-          const eWallet = Math.round(data.e_wallet * 100) / 100;
-
-          // if the user is buying a coin, then update the balance and create a new transaction.
-          if (action === "buy" && eWallet > marketCap) {
-            const newBalance = buy(eWallet, marketCap);
-            updateBalance(newBalance, userID).then((data) => {
-              addNewTransaction(
-                coins,
-                action,
-                newBalance,
-                today,
-                float,
-                userID
-              ).then((data) => {
-                return res.redirect(`/api/users/login/${userID}`);
-              });
-              return;
-            });
-
-            // if the user is selling
-          } else if (action === "sell") {
-            return res.json({
-              error:
-                "This feature is still in development! We appreciate your patience. We are not scammers.",
-            });
-          } else {
-            return res.json({
-              error: "Insufficient funds. Please reload your balance.",
-            });
-          }
+    getUserBalance(user).then((result) => {
+      const eWallet = result.e_wallet;
+      if (action === "buy" && eWallet > price) {
+        const buyingPrice = buy(eWallet, price);
+        updateBalance(buyingPrice, user).then((balance) => {
+          console.log("balance is >>>", balance)
         });
-      })
-      .catch((err) => {
-        res.json({ error: err.message });
-      });
+      }
+    }).catch((err) => res.send({ message: "Invalid request!" }));
+
+    // getUserBalance(userID)
+    //   .then((data) => {
+    //     const price = coins * dollarPrice;
+    //     if (action === "buy" && data > price) {
+    //       const buyingPrice = buy(data, price);
+    //       return addNewTransaction(coins, action, buyingPrice, today)
+    //         .then((data) => {
+    //           res.redirect(`/api/users/login/${userID}`);
+    //         })
+    //         .catch((err) => err);
+    //     } else if (action === "sell") {
+    //       const sellingPrice = sell(data, price);
+    //       return addNewTransaction(coins, action, sellingPrice, today)
+    //         .then((data) => {
+    //           res.redirect(`/api/users/login/${userID}`);
+    //         })
+    //         .catch((err) => err);
+    //     } else {
+    //       res.json({
+    //         error: "Not sufficient funds to complete the transaction.",
+    //       });
+    //     }
+    //   })
+    //   .catch((err) => console.log(err));
+
+    // addNewTransaction(coins, action, dollarPrice, today)
+    //   .then((data) => {
+    //     console.log("I AM DATA >>>>>", data);
+    //   })
+    //   .error((err) => console.log(err));
   });
   return router;
 };
