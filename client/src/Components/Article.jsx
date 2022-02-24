@@ -54,7 +54,7 @@ export default function Article({ article }) {
         <Button size="small" color="primary">
           Share
         </Button>
-        <Button size="small" color="primary">
+        <Button size="small" color="primary" href={article.news_url}>
           Learn More
         </Button>
       </CardActions>

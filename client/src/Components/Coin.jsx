@@ -33,7 +33,7 @@ export default function Coin({ coin, deleteCoin }) {
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
-        <Grid container spacing={2}>
+        <Grid container spacing={2} xs={12} md={8}>
           <Grid item>
             <ButtonBase className={classes.image}>
               <img className={classes.img} src={coin.image} alt={coin.name} />

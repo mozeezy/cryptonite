@@ -3,6 +3,7 @@ import React, { useEffect, useState, useContext } from "react";
 import coingeckoRequest from "../config/coingeckoRequest";
 import { WatchlistContext } from "../WatchlistContext";
 import Coin from "./Coin";
+import { createTheme, ThemeProvider } from "@material-ui/core"
 
 const DisplayCoinWatchlist = () => {
   const [coins, setCoins] = useState([]);
@@ -27,16 +28,24 @@ const DisplayCoinWatchlist = () => {
     fetchData();
   }, [watchlist]);
 
+    const darkTheme = createTheme({
+      palette: {
+        primary: {
+          main: "#fff",
+        },
+        type: "dark",
+      },
+    });
+
   const renderCoins = () => {
     if (isLoading) {
       return <div>Loading...</div>;
     }
     return (
-      <ul style={{width: "max-content"}}>
+      <ul>
         {coins.map((coin) => {
           return (
             <Coin
-              style={{ width: "max-content" }}
               key={coin.id}
               coin={coin}
               deleteCoin={deleteCoin}
@@ -47,7 +56,11 @@ const DisplayCoinWatchlist = () => {
     );
   };
 
-  return <div> {renderCoins()} </div>;
+  return (
+    <ThemeProvider theme={darkTheme}>
+      <div style={{width: "55%"}}> {renderCoins()} </div>
+    </ThemeProvider>
+  );
 };
 
 export default DisplayCoinWatchlist;

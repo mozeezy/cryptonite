@@ -79,59 +79,60 @@ const LandingPage = () => {
   }
   
   return (
-    
     <Grid container component="main">
       <CssBaseline />
       <ThemeProvider theme={darkTheme}>
-      <Grid item xs={false} sm={4} md={7}>
-        <Container className={classes.HeroContent}>
-          <div className={classes.HeroDesc}>
-            <Typography
-              variant="h2"
-              style={{
-                color: "black",
-                fontWeight: "bold",
-                marginBottom: 15,
-              }}
-            >
-              Welcome To CryptoNite
-            </Typography>
-            <Typography
-              variant="subtitle1"
-              style={{
-                color: "red",
-                textTransform: "capitalize",
-              }}
-            >
-              Best place for paper trading your favorite crypto currency
-            </Typography>
-            <Typography
-              variant="subtitle1"
-              style={{
-                color: "white",
-                textTransform: "capitalize",
-              }}
-            >
-              <Button
-                style={{ color: "red" }}
-                onClick={changePage}
+        <Grid
+          item
+          xs={false}
+          sm={4}
+          md={7}
+          style={{ backgroundImage: "../docs/crypto.jpg" }}
+        >
+          <Container className={classes.HeroContent}>
+            <div className={classes.HeroDesc}>
+              <Typography
+                variant="h2"
+                style={{
+                  color: "white",
+                  fontWeight: "bold",
+                  marginBottom: 15,
+                }}
               >
-                Browse Coins
-              </Button>
-            </Typography>
-            <Typography
-              variant="subtitle1"
-              style={{
-                color: "white",
-                textTransform: "capitalize",
-              }}
-            >
-            </Typography>
-          </div>
-        </Container>
-      </Grid>
-    </ThemeProvider>
-     <SignIn />
+                Welcome To CryptoNite
+              </Typography>
+              <Typography
+                variant="subtitle1"
+                style={{
+                  color: "red",
+                  textTransform: "capitalize",
+                }}
+              >
+                Best place for paper trading your favorite crypto currency
+              </Typography>
+              <Typography
+                variant="subtitle1"
+                style={{
+                  color: "white",
+                  textTransform: "capitalize",
+                }}
+              >
+                <Button style={{ color: "red" }} onClick={changePage}>
+                  Browse Coins
+                </Button>
+              </Typography>
+              <Typography
+                variant="subtitle1"
+                style={{
+                  color: "white",
+                  textTransform: "capitalize",
+                }}
+              ></Typography>
+            </div>
+          </Container>
+        </Grid>
+      </ThemeProvider>
+      <SignIn />
     </Grid>
   );
 };

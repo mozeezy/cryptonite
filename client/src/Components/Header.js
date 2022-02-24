@@ -3,6 +3,7 @@ import { AppBar, Button, Container, Toolbar, Typography, makeStyles, createTheme
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { CryptoState } from '../CryptoContext';
 import { UserContext } from '../UserContext';
+import ChatBubbleOutlineOutlinedIcon from "@material-ui/icons/ChatBubbleOutlineOutlined";
 
 
 const useStyles = makeStyles(() => ({
@@ -35,7 +36,7 @@ const Header = () => {
           <Toolbar>
             <Typography
               className={classes.nav}
-              onClick={() => navigate("/")}
+              onClick={() => navigate("/home")}
               variant="h6"
             >
               Cryto<span style={{ color: "red" }}>Nite</span>
@@ -46,6 +47,10 @@ const Header = () => {
                   {context.first_name}
                   <span style={{ color: "red" }}> {context.last_name}</span>
                 </Typography>
+                <ChatBubbleOutlineOutlinedIcon
+                  style={{ color: "red" }}
+                  onClick={() => navigate("/chat")}
+                />
                 <Button
                   onClick={() => navigate("/watch")}
                   style={{ color: "red" }}

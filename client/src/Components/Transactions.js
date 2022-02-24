@@ -150,7 +150,7 @@ const Transactions = () => {
         <TextField id="outlined-basic" label="Coin" variant="outlined" value={coin} onChange={(e)=> {setCoin(e.target.value)}} />
         <TextField id="outlined-basic" label="Price" variant="outlined" value={price} onChange={(e)=> {setPrice(e.target.value)}} />
         <TextField id="outlined-basic" label="Shares" variant="outlined" value={shares} onChange={(e)=>{setShares(e.target.value)}}/>
-        <Button onClick={buy}>Buy</Button>
+        <Button onClick={buy}>Buy/Sell</Button>
          </form>
       </Container>
       <Container style={{ textAlign: "center" }}>

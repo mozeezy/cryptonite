@@ -95,7 +95,7 @@ const SignIn = (props) => {
         password,
       }).then((result) => {
         if(result.data.first_name) {
-          setUser("Sucessfully Signed In!");
+          setUser("✅ Sucessfully Signed In! ✅");
           setContext(result.data);
         } else { 
           setUser(result.data.message);
@@ -182,7 +182,7 @@ const SignIn = (props) => {
             <Copyright />
           </Box>
         </form>
-        <h1>{user}</h1>
+        <h1 style={{color: "red"}}>{user}</h1>
       </div>
     </Grid>
   );
